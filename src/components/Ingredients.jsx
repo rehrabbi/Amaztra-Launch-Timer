@@ -19,6 +19,8 @@ const ICONS = {
   leaf: { paths: ['M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z', 'M2 21c0-3 1.85-5.36 5.08-6'] },
 };
 const ICON_FOR = ['sun', 'droplet', 'shield', 'bolt', 'flame', 'leaf'];
+// short names for the mobile tab rail, where six labels share one line
+const SHORT = ['Gluta', 'Collagen', 'Astax', 'Vit C', 'NAC', 'Poly'];
 
 // Icon SVGs, animated while visible (only the active node shows one).
 function Icon({ name, color = '#E23A34', size = 26 }) {
@@ -485,21 +487,58 @@ function mobileNodeStyle(idx, active) {
 
 function IngredientsMobile() {
   const [active, setActive] = useState(0);
+  const [held, setHeld] = useState(false);
   const cur = ING[active];
   const reduce = prefersReduce();
   const barRef = useRef(null);
   const nameRef = useRef(null);
+  const railRef = useRef(null);
   const firstRun = useRef(true);
 
-  // auto-advance driven by the progress bar filling (matches desktop); tap a dot to jump
+  // auto-advance driven by the progress bar filling (matches desktop); tap or
+  // scrub a tab to jump. Holding the rail parks the rotation on that ingredient.
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || held) return;
     const bar = barRef.current;
     if (!bar) return;
     const a = bar.animate([{ width: '0%' }, { width: '100%' }], { duration: 3600, easing: 'linear', fill: 'forwards' });
     a.onfinish = () => setActive((v) => (v + 1) % ING.length);
     return () => a.cancel();
-  }, [active, reduce]);
+  }, [active, reduce, held]);
+
+  // Press and drag along the rail to scrub through the six actives. touch-action
+  // pan-y keeps the page's vertical scroll-snap while we take the sideways drag.
+  const pickAt = (clientX) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const r = rail.getBoundingClientRect();
+    const i = Math.floor(((clientX - r.left) / r.width) * ING.length);
+    setActive(Math.min(ING.length - 1, Math.max(0, i)));
+  };
+  // a ref, not the state, drives the drag: state lands a render later and the
+  // first moves after the press would be dropped
+  const heldRef = useRef(false);
+  const scrubStart = (e) => {
+    heldRef.current = true;
+    setHeld(true);
+    pickAt(e.clientX);
+    // capture so the drag keeps tracking even if the finger leaves the rail
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
+  };
+  const scrubMove = (e) => { if (heldRef.current) pickAt(e.clientX); };
+  const scrubEnd = () => { heldRef.current = false; setHeld(false); };
+
+  // the same sideways drag works across the pouch stage
+  const swipeFrom = useRef(null);
+  const swipeStart = (e) => { swipeFrom.current = e.clientX; };
+  const swipeEnd = (e) => {
+    const from = swipeFrom.current;
+    swipeFrom.current = null;
+    if (from == null) return;
+    const dx = e.clientX - from;
+    if (Math.abs(dx) < 40) return;
+    setActive((v) => (v + (dx < 0 ? 1 : ING.length - 1)) % ING.length);
+  };
 
   // crossfade + rise the name/detail on each change
   useEffect(() => {
@@ -521,11 +560,11 @@ function IngredientsMobile() {
       <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#8a5f1c' }}>Six actives, one cup</span>
 
       {/* pouch + spinning ring + active icon */}
-      <div style={{ position: 'relative', flex: 1, minHeight: 'clamp(280px,40vh,380px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span aria-hidden="true" style={{ position: 'absolute', width: '66%', aspectRatio: '1', borderRadius: '50%', background: 'radial-gradient(circle,rgba(198,162,76,.4),rgba(201,154,52,.14) 50%,transparent 72%)', filter: 'blur(20px)', animation: reduce ? 'none' : 'glow-pulse 6s ease-in-out infinite' }} />
-        <span aria-hidden="true" style={{ position: 'absolute', width: '72%', aspectRatio: '1', border: '1px solid rgba(23,17,14,.28)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 30s linear infinite' }} />
-        <span aria-hidden="true" style={{ position: 'absolute', width: '52%', aspectRatio: '1', border: '1px dashed rgba(23,17,14,.2)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 22s linear infinite reverse' }} />
-        <img src={POUCH} alt="AMAZTRA pouch" style={{ position: 'relative', width: '42%', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.45))', animation: reduce ? 'none' : 'ing-float 6s ease-in-out infinite' }} />
+      <div onPointerDown={swipeStart} onPointerUp={swipeEnd} onPointerCancel={swipeEnd} style={{ position: 'relative', flex: 1, minHeight: 'clamp(280px,40vh,380px)', display: 'flex', alignItems: 'center', justifyContent: 'center', touchAction: 'pan-y' }}>
+        <span aria-hidden="true" style={{ position: 'absolute', width: '82%', aspectRatio: '1', borderRadius: '50%', background: 'radial-gradient(circle,rgba(198,162,76,.4),rgba(201,154,52,.14) 50%,transparent 72%)', filter: 'blur(20px)', animation: reduce ? 'none' : 'glow-pulse 6s ease-in-out infinite' }} />
+        <span aria-hidden="true" style={{ position: 'absolute', width: '90%', aspectRatio: '1', border: '1px solid rgba(23,17,14,.28)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 30s linear infinite' }} />
+        <span aria-hidden="true" style={{ position: 'absolute', width: '66%', aspectRatio: '1', border: '1px dashed rgba(23,17,14,.2)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 22s linear infinite reverse' }} />
+        <img src={POUCH} alt="AMAZTRA pouch" style={{ position: 'relative', width: '58%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.45))', animation: reduce ? 'none' : 'ing-float 6s ease-in-out infinite', pointerEvents: 'none' }} />
         <span key={active} style={{
           position: 'absolute', top: '2%', left: '50%', transform: 'translateX(-50%)',
           width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(23,17,14,.9)',
@@ -549,20 +588,42 @@ function IngredientsMobile() {
           <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '12px', color: '#b3a789' }}>06</span>
         </div>
 
-        {/* tap dots to jump */}
-        <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+        {/* labelled tabs: tap one, or press and drag across them to scrub */}
+        <div
+          ref={railRef}
+          onPointerDown={scrubStart}
+          onPointerMove={scrubMove}
+          onPointerUp={scrubEnd}
+          onPointerCancel={scrubEnd}
+          style={{ display: 'flex', gap: '6px', marginTop: '16px', touchAction: 'pan-y', cursor: held ? 'grabbing' : 'pointer' }}
+        >
           {ING.map((ing, idx) => (
             <button
               key={ing.k}
               type="button"
               className="tap"
               aria-label={ing.k}
+              aria-pressed={idx === active}
               onClick={() => setActive(idx)}
               style={{
-                flex: 1, height: '4px', border: 0, padding: 0, borderRadius: '999px', cursor: 'pointer',
-                background: idx === active ? '#C11A22' : 'rgba(23,17,14,.2)', transition: 'background .3s',
+                flex: 1, minWidth: 0, border: 0, padding: '10px 0', background: 'none', cursor: 'inherit',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '7px',
               }}
-            />
+            >
+              <span style={{
+                fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600,
+                fontSize: 'clamp(8px,2.3vw,9.5px)', letterSpacing: '.04em', textTransform: 'uppercase',
+                whiteSpace: 'nowrap', lineHeight: 1,
+                color: idx === active ? '#221a12' : '#8a5f1c',
+                opacity: idx === active ? 1 : 0.6, transition: 'color .3s, opacity .3s',
+              }}>{SHORT[idx]}</span>
+              <span style={{
+                display: 'block', width: '100%', height: '7px', borderRadius: '999px',
+                background: idx === active ? '#C11A22' : 'rgba(23,17,14,.2)',
+                boxShadow: idx === active ? '0 3px 10px rgba(193,26,34,.35)' : 'none',
+                transition: 'background .3s, box-shadow .3s',
+              }} />
+            </button>
           ))}
         </div>
       </div>

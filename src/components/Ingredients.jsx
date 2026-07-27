@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { ING, ANGLES, POUCH } from '../data.js';
+import { ING, ANGLES, POUCH, DOSE, DOSE_MAX, FORMATS } from '../data.js';
 
 const R = 42; // desktop orbit radius, percent
+const FMTS = ['coffee', 'capsule'];
+const doseText = (v) => (v < 1 ? v.toFixed(1) : Math.round(v)) + ' mg';
+// Perceptual (square-root) scale against the single 200 mg maximum: ordering stays
+// monotonic, every active visibly grows from coffee to capsule, and the small doses
+// (astaxanthin, NAC) stay readable instead of collapsing to a sliver.
+const barPct = (v) => (Math.sqrt(v / DOSE_MAX) * 100).toFixed(1) + '%';
+// how much the capsule steps each active up by
+const multText = (i) => '\u00d7' + (Math.round((DOSE.capsule[i] / DOSE.coffee[i]) * 10) / 10);
 const EASE = 'cubic-bezier(.23,1,.32,1)';
 const prefersReduce = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -92,12 +100,9 @@ function nodeStyle(idx, active) {
     top: `calc(50% + ${y}%)`,
     transform: 'translate(-50%,-50%) scale(var(--ns))',
     '--ns': active ? 1.08 : 1,
-    fontFamily: "'Marcellus',serif",
-    fontWeight: 400,
-    fontSize: '11px',
-    letterSpacing: '.03em',
-    textTransform: 'uppercase',
-    padding: '10px 15px',
+    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
+    padding: '9px 14px 13px',
+    minWidth: '124px',   // fits the shared 96px dose track on the shortest label
     borderRadius: '2px',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
@@ -137,7 +142,7 @@ function popStyle(active, upper) {
 function iconWrapStyle(active) {
   return {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    width: '54px', height: '54px', margin: '0 auto 11px', borderRadius: '50%',
+    width: '54px', height: '54px', margin: '0 auto', borderRadius: '50%',
     background: 'rgba(23,17,14,.9)', border: '1px solid rgba(198,162,76,.5)',
     boxShadow: '0 8px 22px rgba(0,0,0,.5), 0 0 20px rgba(226,58,52,.25)',
     transform: active ? 'scale(1)' : 'scale(.7)',
@@ -147,6 +152,7 @@ function iconWrapStyle(active) {
 
 function IngredientsDesktop() {
   const [active, setActive] = useState(0);
+  const [fmt, setFmt] = useState('coffee');
 
   const ring1Ref = useRef(null);
   const ring2Ref = useRef(null);
@@ -334,6 +340,76 @@ function IngredientsDesktop() {
     }
   }, []);
 
+  // FORMAT STEP-UP: the orbit holds still and only the figures move — doses count,
+  // bars rescale to the format's own top dose, the multiplier badges land, and one
+  // gold pulse ripples around the ring. React has already painted the end values,
+  // so the count just replays the interval it travelled.
+  // the orbit auto-advances every 3.4s; read the selection from a ref so an
+  // `active` tick can never tear down a running dose count
+  const activeRef = useRef(active);
+  activeRef.current = active;
+
+  const prevFmt = useRef(fmt);
+  useEffect(() => {
+    const from = prevFmt.current;
+    prevFmt.current = fmt;
+    const section = sectionRef.current;
+    const stage = stageRef.current;
+    // park every figure on the exact value for this format — React can't repair
+    // these itself, because it renders the same string across an `active` change
+    const snap = () => {
+      if (stage) stage.querySelectorAll('[data-dose]').forEach((el, i) => { el.textContent = doseText(DOSE[fmt][i]); });
+      const cf = section && section.querySelector('[data-card-dose]');
+      if (cf) cf.textContent = doseText(DOSE[fmt][activeRef.current]);
+    };
+    if (from === fmt || !section || prefersReduce()) { snap(); return undefined; }
+    const up = fmt === 'capsule';
+    const DUR = 780;
+    const a = DOSE[from][activeRef.current];
+    const b = DOSE[fmt][activeRef.current];
+    const rafs = [];
+    const count = (el, x, y) => {
+      if (!el) return;
+      const t0 = performance.now();
+      const tick = () => {
+        const p = Math.min(1, (performance.now() - t0) / DUR);
+        if (p < 1) {
+          el.textContent = doseText(x + (y - x) * (1 - Math.pow(1 - p, 3)));
+          rafs.push(requestAnimationFrame(tick));
+        } else {
+          el.textContent = doseText(y);   // land exactly on the label value
+        }
+      };
+      tick();
+    };
+    const pop = (el, i) => {
+      if (!el) return;
+      el.animate(
+        up ? [{ opacity: 0, transform: 'scale(.5)' }, { opacity: 1, transform: 'scale(1.25)', offset: .55 }, { opacity: 1, transform: 'scale(1)' }]
+           : [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.6)' }],
+        { duration: up ? 480 : 300, delay: up ? 200 + i * 70 : i * 40,
+          easing: up ? 'cubic-bezier(.2,1.5,.35,1)' : 'ease-out', fill: 'both' });
+    };
+    count(section.querySelector('[data-card-dose]'), a, b);
+    pop(section.querySelector('[data-card-delta]'), 0);
+
+    if (stage) {
+      const A = DOSE[from], B = DOSE[fmt];
+      stage.querySelectorAll('[data-dose]').forEach((el, i) => count(el, A[i], B[i]));
+      stage.querySelectorAll('[data-delta]').forEach((el, i) => pop(el, i));
+      stage.querySelectorAll('[data-bar]').forEach((el, i) => el.animate(
+        [{ width: barPct(A[i]) }, { width: barPct(B[i]) }],
+        { duration: DUR + 140, delay: i * 55, easing: EASE, fill: 'both' }));
+    }
+    // one gold pulse rippling around the ring, so the whole orbit registers the change
+    if (stage) stage.querySelectorAll('.orbit-node').forEach((n, i) => n.animate([
+      { boxShadow: '0 6px 16px rgba(0,0,0,.28)' },
+      { boxShadow: '0 6px 16px rgba(0,0,0,.28), 0 0 0 2px rgba(246,227,154,.55)', offset: .45 },
+      { boxShadow: '0 6px 16px rgba(0,0,0,.28)' },
+    ], { duration: 700, delay: 120 + i * 70, easing: 'ease-out' }));
+    return () => { rafs.forEach(cancelAnimationFrame); snap(); };
+  }, [fmt]);
+
   const cur = ING[active];
 
   return (
@@ -354,6 +430,27 @@ function IngredientsDesktop() {
       }}>
         {/* LEFT: heading + editorial detail card */}
         <div>
+          {/* format switch — governs the whole orbit */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', marginBottom: '20px' }}>
+            <div role="group" aria-label="Choose format" style={{
+              display: 'inline-flex', border: '1px solid rgba(23,17,14,.28)', borderRadius: '999px',
+              overflow: 'hidden', background: 'rgba(23,17,14,.06)',
+            }}>
+              {FMTS.map((k) => (
+                <button
+                  key={k} type="button" onClick={() => setFmt(k)} aria-pressed={fmt === k}
+                  style={{
+                    border: 0, cursor: 'pointer', padding: '9px 18px', fontFamily: "'Space Grotesk',sans-serif",
+                    fontSize: '13px', fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase',
+                    background: fmt === k ? '#C11A22' : 'transparent',
+                    color: fmt === k ? '#fff' : '#8a5f1c',
+                    transition: 'background .25s,color .25s',
+                  }}
+                >{FORMATS[k].label}</button>
+              ))}
+            </div>
+            <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '15px', letterSpacing: '.02em', color: '#8a5f1c' }}>{FORMATS[fmt].serving}</span>
+          </div>
           <h2 style={{
             margin: 0, fontFamily: "'Anton',sans-serif", fontWeight: 400, textTransform: 'uppercase',
             fontSize: 'clamp(40px,5.5vw,78px)', lineHeight: 0.9, letterSpacing: '-.01em', color: '#221a12',
@@ -361,7 +458,7 @@ function IngredientsDesktop() {
             <span className="ih-w" data-reveal data-reveal-delay="0" style={{ display: 'inline-block', opacity: 0 }}>Six</span>{' '}
             <span className="ih-w" data-reveal data-reveal-delay=".08" style={{ display: 'inline-block', opacity: 0 }}>actives,</span><br />
             <span className="ih-w" data-reveal data-reveal-delay=".16" style={{ display: 'inline-block', opacity: 0, color: '#C11A22' }}>one</span>{' '}
-            <span className="ih-w" data-reveal data-reveal-delay=".24" style={{ display: 'inline-block', opacity: 0, color: '#C11A22' }}>cup.</span>
+            <span className="ih-w" data-reveal data-reveal-delay=".24" style={{ display: 'inline-block', opacity: 0, color: '#C11A22' }}>{FORMATS[fmt].word}</span>
           </h2>
 
           <div style={{
@@ -381,10 +478,24 @@ function IngredientsDesktop() {
               fontSize: 'clamp(30px,3.8vw,52px)', lineHeight: 1.02, letterSpacing: '-.01em', color: '#221a12',
             }}>{cur.k}</h3>
             <span ref={underlineRef} aria-hidden="true" style={{ display: 'block', height: '2px', width: 0, marginTop: '8px', background: 'linear-gradient(90deg,#8a5f1c,transparent)' }} />
+            <span style={{
+              display: 'inline-block', marginTop: '14px', fontFamily: "'Bricolage Grotesque',sans-serif",
+              fontWeight: 600, fontSize: '13px', color: '#8a5f1c',
+              border: '1px solid rgba(138,95,28,.4)', borderRadius: '3px', padding: '5px 10px',
+            }}>{cur.b}</span>
             <p ref={descRef} style={{
               margin: '16px 0 0', fontFamily: "'Space Grotesk',sans-serif", fontSize: 'clamp(15px,1.5vw,18px)',
               lineHeight: 1.6, color: '#4a3c28', maxWidth: '440px',
             }}>{cur.d}</p>
+            {/* dose of the selected active, on a scale shared by all six in this format */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '18px', maxWidth: '440px' }}>
+              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', whiteSpace: 'nowrap' }}>PER {fmt === 'capsule' ? 'CAPSULE' : 'SACHET'}</span>
+              <span data-card-dose style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '20px', color: '#221a12', whiteSpace: 'nowrap' }}>{doseText(DOSE[fmt][active])}</span>
+              <span data-card-delta style={{ opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Mono',monospace", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px', whiteSpace: 'nowrap' }}>{multText(active)}</span>
+              <span aria-hidden="true" style={{ flex: 1, height: '4px', borderRadius: '2px', background: 'rgba(23,17,14,.15)', overflow: 'hidden' }}>
+                <span style={{ display: 'block', height: '100%', width: barPct(DOSE[fmt][active]), borderRadius: '2px', background: 'linear-gradient(90deg,#8a5f1c,#C99A34)', transition: 'width .6s cubic-bezier(.23,1,.32,1)' }} />
+              </span>
+            </div>
           </div>
         </div>
 
@@ -407,7 +518,8 @@ function IngredientsDesktop() {
 
           {/* center pouch */}
           <div ref={pouchRef} style={{ position: 'absolute', left: '50%', top: '50%', width: '30%', transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 2 }}>
-            <img src={POUCH} alt="AMAZTRA pouch" style={{ width: '100%', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))' }} />
+            <img src={POUCH} alt="AMAZTRA pouch" style={{ display: 'block', width: '100%', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))', opacity: fmt === 'coffee' ? 1 : 0, transition: 'opacity .42s ease' }} />
+            <img src={FORMATS.capsule.obj} alt="AMAZTRA capsule box" style={{ position: 'absolute', left: 0, top: '50%', width: '100%', transform: 'translateY(-50%)', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))', opacity: fmt === 'capsule' ? 1 : 0, transition: 'opacity .42s ease' }} />
           </div>
 
           {/* ingredient nodes */}
@@ -427,11 +539,23 @@ function IngredientsDesktop() {
                 <span aria-hidden="true" style={auraStyle(isActive)} />
                 <span style={popStyle(isActive, upper)}>
                   <span style={iconWrapStyle(isActive)}><Icon name={ICON_FOR[idx]} /></span>
-                  <span style={{ display: 'inline-block', background: '#17110e', border: '1px solid #C6A24C', borderRadius: '3px', padding: '9px 14px', boxShadow: '0 12px 28px rgba(0,0,0,.5)' }}>
-                    <span style={{ display: 'block', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, fontSize: '13px', color: '#EDE4D3', whiteSpace: 'nowrap' }}>{ing.b}</span>
-                  </span>
                 </span>
-                <span style={{ position: 'relative', zIndex: 2 }}>{ing.k}</span>
+                <span style={{
+                  position: 'relative', zIndex: 2, fontFamily: "'Marcellus',serif", fontWeight: 400,
+                  fontSize: '11px', letterSpacing: '.03em', textTransform: 'uppercase',
+                }}>{ing.k}</span>
+                <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span data-dose style={{ fontFamily: "'Space Mono',monospace", fontSize: '11px', fontWeight: 700, color: isActive ? '#fff' : '#C6A24C' }}>{doseText(DOSE[fmt][idx])}</span>
+                  <span data-delta style={{
+                    opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Mono',monospace", fontSize: '9px',
+                    fontWeight: 700, letterSpacing: '.04em', color: '#141210',
+                    background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '0 4px',
+                  }}>{multText(idx)}</span>
+                </span>
+                {/* dose bar, pinned inside the node's bottom edge so it costs no height */}
+                <span aria-hidden="true" style={{ position: 'absolute', left: '50%', marginLeft: '-48px', width: '96px', bottom: '6px', height: '2px', borderRadius: '2px', background: 'rgba(237,228,211,.18)', overflow: 'hidden', zIndex: 2 }}>
+                  <span data-bar style={{ display: 'block', height: '100%', width: barPct(DOSE[fmt][idx]), borderRadius: '2px', background: 'linear-gradient(90deg,#C99A34,#F6E39A)' }} />
+                </span>
               </button>
             );
           })}
@@ -487,6 +611,7 @@ function mobileNodeStyle(idx, active) {
 
 function IngredientsMobile() {
   const [active, setActive] = useState(0);
+  const [fmt, setFmt] = useState('coffee');
   const [held, setHeld] = useState(false);
   const cur = ING[active];
   const reduce = prefersReduce();
@@ -557,14 +682,30 @@ function IngredientsMobile() {
       display: 'flex', flexDirection: 'column',
       fontFamily: "'Space Grotesk',system-ui,sans-serif",
     }}>
-      <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#8a5f1c' }}>Six actives, one cup</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <div role="group" aria-label="Choose format" style={{ display: 'inline-flex', border: '1px solid rgba(23,17,14,.28)', borderRadius: '999px', overflow: 'hidden', background: 'rgba(23,17,14,.06)' }}>
+          {FMTS.map((k) => (
+            <button
+              key={k} type="button" className="tap" onClick={() => setFmt(k)} aria-pressed={fmt === k}
+              style={{
+                border: 0, cursor: 'pointer', padding: '11px 16px', minHeight: '44px',
+                fontFamily: "'Space Grotesk',sans-serif", fontSize: '12px', fontWeight: 600,
+                letterSpacing: '.1em', textTransform: 'uppercase',
+                background: fmt === k ? '#C11A22' : 'transparent',
+                color: fmt === k ? '#fff' : '#8a5f1c', transition: 'background .25s,color .25s',
+              }}
+            >{FORMATS[k].label}</button>
+          ))}
+        </div>
+        <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#8a5f1c' }}>Six actives, one {FORMATS[fmt].word.replace('.', '')}</span>
+      </div>
 
       {/* pouch + spinning ring + active icon */}
       <div onPointerDown={swipeStart} onPointerUp={swipeEnd} onPointerCancel={swipeEnd} style={{ position: 'relative', flex: 1, minHeight: 'clamp(280px,40vh,380px)', display: 'flex', alignItems: 'center', justifyContent: 'center', touchAction: 'pan-y' }}>
         <span aria-hidden="true" style={{ position: 'absolute', width: '82%', aspectRatio: '1', borderRadius: '50%', background: 'radial-gradient(circle,rgba(198,162,76,.4),rgba(201,154,52,.14) 50%,transparent 72%)', filter: 'blur(20px)', animation: reduce ? 'none' : 'glow-pulse 6s ease-in-out infinite' }} />
         <span aria-hidden="true" style={{ position: 'absolute', width: '90%', aspectRatio: '1', border: '1px solid rgba(23,17,14,.28)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 30s linear infinite' }} />
         <span aria-hidden="true" style={{ position: 'absolute', width: '66%', aspectRatio: '1', border: '1px dashed rgba(23,17,14,.2)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 22s linear infinite reverse' }} />
-        <img src={POUCH} alt="AMAZTRA pouch" style={{ position: 'relative', width: '58%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.45))', animation: reduce ? 'none' : 'ing-float 6s ease-in-out infinite', pointerEvents: 'none' }} />
+        <img key={fmt} src={FORMATS[fmt].obj} alt={fmt === 'capsule' ? 'AMAZTRA capsule box' : 'AMAZTRA pouch'} style={{ position: 'relative', width: '58%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.45))', animation: reduce ? 'none' : 'ing-float 6s ease-in-out infinite', pointerEvents: 'none' }} />
         <span key={active} style={{
           position: 'absolute', top: '2%', left: '50%', transform: 'translateX(-50%)',
           width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(23,17,14,.9)',
@@ -577,6 +718,15 @@ function IngredientsMobile() {
       <div>
         <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '.02em', color: '#8a5f1c' }}>{cur.s}</span>
         <h3 ref={nameRef} style={{ margin: '8px 0 0', fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(40px,12vw,54px)', lineHeight: 0.9, letterSpacing: '-.01em', color: '#221a12' }}>{cur.k}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+          <span style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '17px', color: '#221a12' }}>{doseText(DOSE[fmt][active])}</span>
+          {fmt === 'capsule' ? (
+            <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px' }}>{multText(active)}</span>
+          ) : null}
+          <span style={{ flex: 1, height: '3px', borderRadius: '2px', background: 'rgba(23,17,14,.15)', overflow: 'hidden' }}>
+            <span style={{ display: 'block', height: '100%', width: barPct(DOSE[fmt][active]), borderRadius: '2px', background: 'linear-gradient(90deg,#C99A34,#8a5f1c)', transition: 'width .6s cubic-bezier(.23,1,.32,1)' }} />
+          </span>
+        </div>
         <p style={{ margin: '12px 0 0', fontSize: '15px', lineHeight: 1.55, color: '#4a3c28', minHeight: '68px' }}>{cur.d}</p>
 
         {/* progress rail through all six */}

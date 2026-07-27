@@ -11,6 +11,22 @@ export const ING = [
 
 export const ANGLES = [-90, -30, 30, 90, 150, 210];
 
+// Per-serving amounts of each active, in the same order as ING.
+// capsule[] are the approved label values.
+// TODO(AMAZTRA): coffee[] are PLACEHOLDERS — replace with the real per-sachet amounts.
+export const DOSE = {
+  coffee: [50, 40, 0.5, 20, 8, 15],
+  capsule: [200, 150, 2, 70, 23, 50],
+};
+// ONE absolute scale across both formats, so a capsule bar always reads fuller
+// than the same active's coffee bar. (Highest dose anywhere = glutathione, 200 mg.)
+export const DOSE_MAX = 200;
+
+export const FORMATS = {
+  coffee: { label: 'Coffee', word: 'cup.', serving: '1 sachet daily · instant coffee mix', obj: 'assets/img/pouch/1-front-cut.png' },
+  capsule: { label: 'Capsule', word: 'capsule.', serving: '1 capsule daily · higher potency', obj: 'assets/img/amaztra-box.png' },
+};
+
 export const POUCH = 'assets/img/pouch/1-front-cut.png';
 
 // Outbound links used by the final CTA.

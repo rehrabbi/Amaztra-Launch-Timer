@@ -5,6 +5,7 @@ import Hero from './components/Hero.jsx';
 import Ingredients from './components/Ingredients.jsx';
 import Story from './components/Story.jsx';
 import Ritual from './components/Ritual.jsx';
+import TwoWays from './components/TwoWays.jsx';
 import WhatsInside from './components/WhatsInside.jsx';
 import Benefits from './components/Benefits.jsx';
 import Faq from './components/Faq.jsx';
@@ -22,6 +23,7 @@ export default function App() {
       <Hero introDone={introDone} />
       <Story />
       <Ritual />
+      <TwoWays />
       <Ingredients />
       <WhatsInside />
       <Benefits />

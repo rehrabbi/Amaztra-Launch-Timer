@@ -32,6 +32,7 @@ function FinalCtaDesktop() {
   const rootRef = useRef(null);
   const pouchWrapRef = useRef(null);
   const sachetWrapRef = useRef(null);
+  const boxWrapRef = useRef(null);
   const reduce = prefersReduce();
 
   // cursor parallax on the product cluster: pouch drifts a little, sachet more (depth)
@@ -42,10 +43,12 @@ function FinalCtaDesktop() {
     const py = (e.clientY - r.top) / r.height - 0.5;
     if (pouchWrapRef.current) pouchWrapRef.current.style.transform = `translate(${(px * 16).toFixed(1)}px,${(py * 12).toFixed(1)}px)`;
     if (sachetWrapRef.current) sachetWrapRef.current.style.transform = `translate(${(px * 32).toFixed(1)}px,${(py * 24).toFixed(1)}px)`;
+    if (boxWrapRef.current) boxWrapRef.current.style.transform = `translate(${(px * 9).toFixed(1)}px,${(py * 7).toFixed(1)}px)`;
   };
   const parallaxReset = () => {
     if (pouchWrapRef.current) pouchWrapRef.current.style.transform = 'translate(0,0)';
     if (sachetWrapRef.current) sachetWrapRef.current.style.transform = 'translate(0,0)';
+    if (boxWrapRef.current) boxWrapRef.current.style.transform = 'translate(0,0)';
   };
 
   useEffect(() => {
@@ -98,29 +101,33 @@ function FinalCtaDesktop() {
 
         {/* copy, product cluster, then the button — all kept to the left */}
         <div style={{ position: 'relative', maxWidth: '560px' }}>
-          <span data-reveal style={{ display: 'inline-block', opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#C6A24C' }}>One last sip</span>
+          <span data-reveal style={{ display: 'inline-block', opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#C6A24C' }}>Both ways in</span>
           <h2 data-reveal data-reveal-delay=".08" className="fp-head" style={{ opacity: reduce ? 1 : 0, margin: '16px 0 0', fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontWeight: 400, fontSize: 'clamp(46px,5.6vw,74px)', lineHeight: 0.9, letterSpacing: '-.005em', color: '#EDE4D3' }}>
             Six actives.<br />
             <span data-anim style={{ background: 'linear-gradient(100deg,#C99A34 0%,#F6E39A 22%,#FFF3C6 38%,#E1BC5C 56%,#C99A34 78%)', backgroundSize: '220% 100%', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', animation: reduce ? 'none' : 'cta2-shine 4.5s linear infinite' }}>Beauty from Within</span>
           </h2>
-          <p data-reveal data-reveal-delay=".16" style={{ opacity: reduce ? 1 : 0, margin: '20px 0 0', maxWidth: '320px', fontSize: '16px', lineHeight: 1.7, color: '#c9bca9' }}>Six actives, real coffee. Beauty you can brew and take.</p>
+          <p data-reveal data-reveal-delay=".16" style={{ opacity: reduce ? 1 : 0, margin: '20px 0 0', maxWidth: '320px', fontSize: '16px', lineHeight: 1.7, color: '#c9bca9' }}>Six actives, two formats. Beauty you can brew and take.</p>
 
-          {/* pouch + sachet cluster, between the headline and the button */}
+          {/* pouch + sachet + capsule box, between the headline and the button */}
           <div data-reveal data-reveal-delay=".22" onMouseMove={parallax} onMouseLeave={parallaxReset} style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(580px,100%)', height: 'clamp(240px,28vw,340px)', margin: 'clamp(8px,1.2vh,14px) 0' }}>
             <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(16px)', zIndex: 0 }} />
+            <span ref={boxWrapRef} style={{ position: 'absolute', right: '-6%', bottom: '3%', height: '86%', transition: 'transform .3s ease', zIndex: 5 }}>
+              <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box" data-anim style={{ display: 'block', height: '100%', width: 'auto', filter: 'drop-shadow(0 22px 30px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'cta2-bob 10s ease-in-out -3s infinite' }} />
+            </span>
             <span ref={pouchWrapRef} style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', transition: 'transform .3s ease', zIndex: 2 }}>
               <img src="assets/img/pouch-new.png" alt="AMAZTRA coffee pouch" data-anim style={{ display: 'block', height: '100%', width: 'auto', filter: 'drop-shadow(0 22px 30px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'cta2-bob 9s ease-in-out infinite' }} />
             </span>
-            <span ref={sachetWrapRef} style={{ position: 'absolute', left: '32%', bottom: '2%', width: '72%', transition: 'transform .3s ease', zIndex: 4 }}>
+            <span ref={sachetWrapRef} style={{ position: 'absolute', left: '26%', bottom: '2%', width: '62%', transition: 'transform .3s ease', zIndex: 4 }}>
               <img src="assets/img/sachet-new.png" alt="AMAZTRA instant coffee sachet" data-anim style={{ display: 'block', width: '100%', transformOrigin: 'center', transform: 'rotate(-8deg)', filter: 'drop-shadow(0 20px 26px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'cta2-sway 8s ease-in-out infinite' }} />
             </span>
           </div>
 
           <a data-reveal data-reveal-delay=".3" href={LINKS.shop} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 32px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(15px,1.6vw,17px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-            Come brew with us
+            Shop coffee {'&'} capsules
             <span aria-hidden="true" className="cta-arrow" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
             <span aria-hidden="true" data-anim style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'cta-bshine 5s ease-in-out infinite' }} />
           </a>
+          <span data-reveal data-reveal-delay=".38" style={{ display: 'block', opacity: reduce ? 1 : 0, marginTop: '14px', fontFamily: "'Space Mono',monospace", fontSize: '11px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>One store &middot; both formats</span>
         </div>
       </div>
     </section>
@@ -189,7 +196,7 @@ function FinalCtaMobile() {
 
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', padding: 'calc(env(safe-area-inset-top,0px) + 52px) 26px 34px' }}>
         {/* text block — top */}
-        <span data-r="0.2" style={{ opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#C6A24C' }}>One last sip</span>
+        <span data-r="0.2" style={{ opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#C6A24C' }}>Both ways in</span>
         <h2 data-r="0.35" style={{ opacity: reduce ? 1 : 0, margin: '12px 0 0', fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontWeight: 400, fontSize: 'clamp(46px,14vw,60px)', lineHeight: 0.9, letterSpacing: '-.005em', color: '#EDE4D3', textShadow: '0 2px 20px rgba(0,0,0,.5)' }}>Six actives.<br /><span style={{ background: 'linear-gradient(100deg,#C99A34 0%,#F6E39A 22%,#FFF3C6 38%,#E1BC5C 56%,#C99A34 78%)', backgroundSize: '220% 100%', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', textShadow: 'none', animation: reduce ? 'none' : 'cta2-shine 4.5s linear infinite' }}>Beauty from Within</span></h2>
 
         {/* spacer lets the model read through */}
@@ -198,14 +205,16 @@ function FinalCtaMobile() {
         {/* floating pouch + sachet (7a), just above the button */}
         <div data-r="0.55" style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(300px,74%)', height: '165px', margin: '0 0 26px' }}>
           <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(14px)' }} />
-          <img src="assets/img/pouch-new.png" alt="AMAZTRA pouch" style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', width: 'auto', filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'fm-bob 9s ease-in-out infinite' }} />
-          <img src="assets/img/sachet-new.png" alt="AMAZTRA sachet" style={{ position: 'absolute', left: '30%', bottom: '8%', width: '64%', transformOrigin: 'center', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
+          <img src="assets/img/pouch-new.png" alt="AMAZTRA pouch" style={{ position: 'absolute', zIndex: 2, left: 0, bottom: 0, height: '100%', width: 'auto', filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'fm-bob 9s ease-in-out infinite' }} />
+          <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box" style={{ position: 'absolute', right: '-4%', bottom: '5%', height: '80%', width: 'auto', zIndex: 5, filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.6))' }} />
+          <img src="assets/img/sachet-new.png" alt="AMAZTRA sachet" style={{ position: 'absolute', zIndex: 4, left: '30%', bottom: '8%', width: '64%', transformOrigin: 'center', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
         </div>
 
         <a data-r="0.7" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-          Come brew with us<span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
+          Shop coffee {'&'} capsules<span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
           <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'fm-btnshine 5s ease-in-out 1.6s infinite' }} />
         </a>
+        <span data-r="0.82" style={{ opacity: reduce ? 1 : 0, marginTop: '12px', fontFamily: "'Space Mono',monospace", fontSize: '10.5px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>One store &middot; both formats</span>
       </div>
     </section>
   );

@@ -187,7 +187,7 @@ function RitualDesktop() {
             margin: '20px 0 0', opacity: 0, maxWidth: '46ch', fontSize: 'clamp(15px,1.7vw,18px)',
             lineHeight: 1.55, color: '#cfc4b2',
           }}>
-            The same cup you already reach for every morning. Order it once, keep it forever. The actives are already in.
+            The same cup you already reach for every morning, plus one capsule when you want the higher dose. Order it once, keep it forever.
           </p>
 
           {/* order card — feeds out of a printer slot */}
@@ -212,7 +212,7 @@ function RitualDesktop() {
               </div>
               <div style={row}>
                 <Check boxRef={sipRef} />
-                <span style={{ color: '#EDE4D3' }}>SIP &middot; slow</span>
+                <span style={{ color: '#EDE4D3' }}>TAKE &middot; one capsule</span>
               </div>
               <div ref={glowRef} style={{ ...row, opacity: reduce ? 1 : 0 }}>
                 <span style={{
@@ -328,7 +328,7 @@ function RitualMobile() {
       </div>
 
       <div style={{ position: 'absolute', left: 'clamp(22px,6vw,26px)', right: 'clamp(22px,6vw,26px)', bottom: 'clamp(30px,5vh,44px)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <p ref={descRef} style={{ opacity: reduce ? 1 : 0, margin: 0, fontSize: 'clamp(14px,4vw,16px)', lineHeight: 1.55, color: '#e9e0d0', textShadow: '0 1px 10px rgba(0,0,0,.7)' }}>The same cup you already reach for every morning. Order it once, keep it forever. The actives are already in.</p>
+        <p ref={descRef} style={{ opacity: reduce ? 1 : 0, margin: 0, fontSize: 'clamp(14px,4vw,16px)', lineHeight: 1.55, color: '#e9e0d0', textShadow: '0 1px 10px rgba(0,0,0,.7)' }}>The same cup you already reach for every morning, plus one capsule when you want the higher dose. Order it once, keep it forever.</p>
         <div ref={cardRef} style={{ opacity: reduce ? 1 : 0, borderRadius: '16px', overflow: 'hidden', background: 'rgba(20,18,16,.55)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(237,228,211,.18)', boxShadow: '0 24px 50px rgba(0,0,0,.5)' }}>
         <div style={{ background: 'rgba(226,58,52,.92)', padding: '12px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: "'Anton',sans-serif", fontSize: '18px', color: '#141210', letterSpacing: '.04em' }}>AMAZTRA</span>
@@ -341,7 +341,7 @@ function RitualMobile() {
           </div>
           <div style={rowS}>
             <span ref={sipRef} style={{ ...boxS, opacity: reduce ? 1 : 0 }}><CheckSvg /></span>
-            <span style={{ color: '#EDE4D3' }}>SIP &middot; slow</span>
+            <span style={{ color: '#EDE4D3' }}>TAKE &middot; one capsule</span>
           </div>
           <div ref={glowRef} style={{ ...rowS, opacity: reduce ? 1 : 0 }}>
             <span style={{ width: '22px', height: '22px', borderRadius: '5px', border: '2px solid rgba(198,162,76,.4)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

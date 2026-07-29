@@ -165,7 +165,7 @@ function RitualDesktop() {
           clipPath: reduce ? 'none' : 'inset(0 0 100% 0)',
         }}>
           <span aria-hidden="true" style={{ position: 'absolute', inset: '-14%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(226,58,52,.26), rgba(246,183,74,.1) 46%, transparent 70%)', filter: 'blur(34px)', pointerEvents: 'none', zIndex: 0 }} />
-          <video src="assets/video/ritual-scene.mp4" poster="assets/video/ritual-scene-poster.jpg"
+          <video src="assets/video/ritual-new.mp4" poster="assets/video/ritual-new-poster.jpg"
             autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true"
             style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,.4)', borderRadius: 'inherit' }} />        </div>
@@ -181,7 +181,7 @@ function RitualDesktop() {
             fontSize: 'clamp(40px,5.4vw,66px)', lineHeight: 0.9, letterSpacing: '.01em', color: '#EDE4D3',
           }}>
             <span className="rt-w" style={{ display: 'inline-block', opacity: 0 }}>A ritual<span style={{ color: '#C6A24C' }}>,</span></span><br />
-            <span className="rt-w" style={{ display: 'inline-block', opacity: 0 }}>not a </span><span id="ritual-routine" className="rt-w" style={{ display: 'inline-block', opacity: 0, backgroundImage: 'linear-gradient(100deg,#E23A34 0%,#ff7a54 45%,#E23A34 70%)', backgroundSize: '200% 100%', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', animation: 'rt-shimmer 4.5s linear infinite' }}>routine.</span>
+            <span className="rt-w" style={{ display: 'inline-block', opacity: 0, marginRight: '.26em' }}>not a</span><span id="ritual-routine" className="rt-w" style={{ display: 'inline-block', opacity: 0, backgroundImage: 'linear-gradient(100deg,#E23A34 0%,#ff7a54 45%,#E23A34 70%)', backgroundSize: '200% 100%', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', animation: 'rt-shimmer 4.5s linear infinite' }}>routine.</span>
           </h2>
           <p className="rt-w" style={{
             margin: '20px 0 0', opacity: 0, maxWidth: '46ch', fontSize: 'clamp(15px,1.7vw,18px)',
@@ -202,10 +202,10 @@ function RitualDesktop() {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
               <span style={{ fontFamily: "'Anton',sans-serif", fontSize: '22px', color: '#141210', letterSpacing: '.04em' }}>AMAZTRA</span>
-              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '13px', color: '#141210' }}>ORDER #01</span>
+              <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '13px', color: '#141210' }}>ORDER #01</span>
             </div>
 
-            <div style={{ padding: '28px 24px', fontFamily: "'Space Mono',monospace", fontSize: '16px' }}>
+            <div style={{ padding: '28px 24px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '16px' }}>
               <div style={row}>
                 <Check boxRef={brewRef} />
                 <span style={{ color: '#EDE4D3' }}>BREW &middot; your way</span>
@@ -318,7 +318,7 @@ function RitualMobile() {
     <section id="ritual" ref={rootRef} className="fullpage" style={{ position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: '#141210', fontFamily: "'Space Grotesk',system-ui,sans-serif" }}>
       <style>{`@keyframes rm-dots{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}@keyframes rm-shimmer{0%{background-position:0 0}100%{background-position:200% 0}}`}</style>
       <div ref={mediaRef} aria-hidden="true" style={{ position: 'absolute', inset: 0, clipPath: reduce ? 'none' : 'inset(0 0 100% 0)' }}>
-        <video src="assets/video/ritual-scene.mp4" poster="assets/video/ritual-scene-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <video src="assets/video/ritual-new.mp4" poster="assets/video/ritual-new-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       </div>
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(18,15,13,.6) 0%,rgba(18,15,13,.12) 30%,rgba(18,15,13,.55) 60%,rgba(18,15,13,.94) 100%)' }} />
 
@@ -332,9 +332,9 @@ function RitualMobile() {
         <div ref={cardRef} style={{ opacity: reduce ? 1 : 0, borderRadius: '16px', overflow: 'hidden', background: 'rgba(20,18,16,.55)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(237,228,211,.18)', boxShadow: '0 24px 50px rgba(0,0,0,.5)' }}>
         <div style={{ background: 'rgba(226,58,52,.92)', padding: '12px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: "'Anton',sans-serif", fontSize: '18px', color: '#141210', letterSpacing: '.04em' }}>AMAZTRA</span>
-          <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '12px', color: '#141210' }}>ORDER #01</span>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '12px', color: '#141210' }}>ORDER #01</span>
         </div>
-        <div style={{ padding: '16px 18px', fontFamily: "'Space Mono',monospace", fontSize: '14px' }}>
+        <div style={{ padding: '16px 18px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '14px' }}>
           <div style={rowS}>
             <span ref={brewRef} style={{ ...boxS, opacity: reduce ? 1 : 0 }}><CheckSvg /></span>
             <span style={{ color: '#EDE4D3' }}>BREW &middot; your way</span>

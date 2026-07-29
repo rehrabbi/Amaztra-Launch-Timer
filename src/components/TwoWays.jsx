@@ -24,34 +24,23 @@ const SPECS = {
     ['SERVING', '1 sachet daily'],
     ['BEST FOR', 'Keeping the habit'],
   ],
-  // TODO(AMAZTRA): confirm the capsule serving size on the approved label.
   capsule: [
     ['FORMAT', 'Capsule'],
-    ['SERVING', '1 capsule daily', true],
+    ['SERVING', '1 capsule daily'],
     ['BEST FOR', 'Maximum potency'],
   ],
 };
 
-function Verify() {
-  return (
-    <span style={{
-      display: 'inline-block', padding: '1px 5px', marginLeft: '6px',
-      border: '1px solid rgba(226,58,52,.6)', borderRadius: '3px',
-      color: '#E23A34', fontSize: '10px', letterSpacing: '.06em',
-    }}>VERIFY</span>
-  );
-}
-
 function SpecRows({ rows }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', fontFamily: "'Space Mono',monospace", fontSize: '12.5px' }}>
-      {rows.map(([k, v, flag]) => (
+    <div style={{ display: 'flex', flexDirection: 'column', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '12.5px' }}>
+      {rows.map(([k, v]) => (
         <div key={k} style={{
           display: 'flex', justifyContent: 'space-between', gap: '12px', padding: '8px 0',
           borderTop: '1px dashed rgba(237,228,211,.14)',
         }}>
           <span style={{ color: '#8f8578' }}>{k}</span>
-          <span style={{ color: '#EDE4D3', textAlign: 'right' }}>{v}{flag ? <Verify /> : null}</span>
+          <span style={{ color: '#EDE4D3', textAlign: 'right' }}>{v}</span>
         </div>
       ))}
     </div>
@@ -82,7 +71,7 @@ function Panel({ kind, panelRef, reduce, clip }) {
         <span style={{ fontFamily: "'Anton',sans-serif", fontSize: 'clamp(17px,1.5vw,20px)', letterSpacing: '.05em', color: '#141210' }}>
           {isCoffee ? 'THE COFFEE' : 'THE CAPSULE'}
         </span>
-        <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '12px', color: '#141210' }}>
+        <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '12px', color: '#141210' }}>
           {isCoffee ? 'DAILY' : 'HIGHER DOSE'}
         </span>
       </div>
@@ -220,7 +209,7 @@ function TwoWaysDesktop() {
           <Panel kind="capsule" panelRef={rightRef} reduce={reduce} clip="inset(0 100% 0 0)" />
         </div>
 
-        <p style={{ margin: 'clamp(16px,2.6vh,22px) 0 0', textAlign: 'center', fontFamily: "'Space Mono',monospace", fontSize: '11px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>
+        <p style={{ margin: 'clamp(16px,2.6vh,22px) 0 0', textAlign: 'center', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '11px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>
           No approved therapeutic claims
         </p>
       </div>
@@ -304,7 +293,7 @@ function TwoWaysMobile() {
         }} />
         <MobileCard kind="capsule" cardRef={twoRef} reduce={reduce} clip="inset(0 0 100% 0)" />
 
-        <p style={{ margin: 0, textAlign: 'center', fontFamily: "'Space Mono',monospace", fontSize: '10.5px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>
+        <p style={{ margin: 0, textAlign: 'center', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10.5px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>
           No approved therapeutic claims
         </p>
       </div>
@@ -342,7 +331,7 @@ function MobileCard({ kind, cardRef, reduce, clip }) {
           <span style={{ fontFamily: "'Anton',sans-serif", fontSize: '17px', letterSpacing: '.04em', color: isCoffee ? '#E23A34' : '#C6A24C' }}>
             {isCoffee ? 'THE COFFEE' : 'THE CAPSULE'}
           </span>
-          <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '10px', letterSpacing: '.06em', color: '#8f8578' }}>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10px', letterSpacing: '.06em', color: '#8f8578' }}>
             {isCoffee ? 'DAILY' : 'HIGHER DOSE'}
           </span>
         </div>

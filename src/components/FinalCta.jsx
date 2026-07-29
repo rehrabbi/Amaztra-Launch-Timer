@@ -30,26 +30,23 @@ const DUST = [
  */
 function FinalCtaDesktop() {
   const rootRef = useRef(null);
-  const pouchWrapRef = useRef(null);
-  const sachetWrapRef = useRef(null);
-  const boxWrapRef = useRef(null);
+  const modelARef = useRef(null);
+  const modelBRef = useRef(null);
   const reduce = prefersReduce();
 
-  // cursor parallax on the product cluster: pouch drifts a little, sachet more (depth)
-  const parallax = (e) => {
+  // crossfade the coffee model and the capsule model on a slow loop
+  useEffect(() => {
     if (reduce) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    if (pouchWrapRef.current) pouchWrapRef.current.style.transform = `translate(${(px * 16).toFixed(1)}px,${(py * 12).toFixed(1)}px)`;
-    if (sachetWrapRef.current) sachetWrapRef.current.style.transform = `translate(${(px * 32).toFixed(1)}px,${(py * 24).toFixed(1)}px)`;
-    if (boxWrapRef.current) boxWrapRef.current.style.transform = `translate(${(px * 9).toFixed(1)}px,${(py * 7).toFixed(1)}px)`;
-  };
-  const parallaxReset = () => {
-    if (pouchWrapRef.current) pouchWrapRef.current.style.transform = 'translate(0,0)';
-    if (sachetWrapRef.current) sachetWrapRef.current.style.transform = 'translate(0,0)';
-    if (boxWrapRef.current) boxWrapRef.current.style.transform = 'translate(0,0)';
-  };
+    const a = modelARef.current, b = modelBRef.current;
+    if (!a || !b) return;
+    let showB = false;
+    const id = setInterval(() => {
+      showB = !showB;
+      a.style.opacity = showB ? '0' : '1';
+      b.style.opacity = showB ? '1' : '0';
+    }, 5200);
+    return () => clearInterval(id);
+  }, [reduce]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -84,6 +81,7 @@ function FinalCtaDesktop() {
         @keyframes cta2-shine { to { background-position:220% 0; } }
         @keyframes cta2-bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
         @keyframes cta2-sway { 0%,100% { transform:rotate(-8deg) translateY(0); } 50% { transform:rotate(-6.4deg) translateY(-6px); } }
+        @keyframes cta2-sway-r { 0%,100% { transform:rotate(-11deg) translateY(0); } 50% { transform:rotate(-9.4deg) translateY(-6px); } }
         @keyframes cta2-gpulse { 0%,100% { opacity:.45; } 50% { opacity:.85; } }
         @media (prefers-reduced-motion: reduce) { #brew [data-anim] { animation:none !important; } }
       `}</style>
@@ -95,7 +93,20 @@ function FinalCtaDesktop() {
 
       {/* model — big, on the right, connected to the section floor */}
       <span aria-hidden="true" style={{ position: 'absolute', right: 'max(0px, calc((100vw - 1330px) / 2))', bottom: 0, width: 'clamp(360px,42vw,620px)', height: 'clamp(300px,40vh,560px)', background: 'radial-gradient(ellipse at 60% 90%,rgba(246,183,74,.20),rgba(226,58,52,.08) 46%,transparent 72%)', filter: 'blur(24px)', pointerEvents: 'none', zIndex: 1 }} />
-      <img data-reveal data-reveal-delay=".18" data-reveal-x="46px" src="assets/img/model-cut.png" alt="Woman enjoying an AMAZTRA coffee" className="cta-model" style={{ opacity: reduce ? 1 : 0, position: 'absolute', right: 'max(20px, calc((100vw - 1200px) / 2))', bottom: 0, height: 'clamp(440px,58vw,820px)', width: 'auto', filter: 'drop-shadow(0 26px 40px rgba(0,0,0,.6))', pointerEvents: 'none', zIndex: 2 }} />
+      <div data-reveal data-reveal-delay=".18" data-reveal-x="46px" className="cta-model"
+        style={{ opacity: reduce ? 1 : 0, position: 'absolute',
+          right: 'max(20px, calc((100vw - 1200px) / 2))', bottom: 0,
+          height: 'clamp(440px,58vw,820px)', pointerEvents: 'none', zIndex: 2 }}>
+        <img ref={modelARef} src="assets/img/model-cut.png" alt="Woman enjoying an AMAZTRA coffee"
+          style={{ display: 'block', height: '100%', width: 'auto',
+            filter: 'drop-shadow(0 26px 40px rgba(0,0,0,.6))',
+            transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)' }} />
+        <img ref={modelBRef} src="assets/img/model-capsule.png" alt="Woman holding an AMAZTRA capsule box"
+          style={{ position: 'absolute', right: '-21.7%', bottom: 0, display: 'block',
+            height: '106.1%', width: 'auto', maxWidth: 'none', opacity: 0,
+            filter: 'drop-shadow(0 26px 40px rgba(0,0,0,.6))',
+            transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)' }} />
+      </div>
 
       <div className="two-col" style={{ position: 'relative', zIndex: 3, width: '100%', maxWidth: '1240px', margin: '0 auto', minHeight: 'clamp(620px,92vh,940px)', padding: 'clamp(56px,8vh,110px) clamp(28px,6vw,80px) 0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
@@ -108,18 +119,27 @@ function FinalCtaDesktop() {
           </h2>
           <p data-reveal data-reveal-delay=".16" style={{ opacity: reduce ? 1 : 0, margin: '20px 0 0', maxWidth: '320px', fontSize: '16px', lineHeight: 1.7, color: '#c9bca9' }}>Six actives, two formats. Beauty you can brew and take.</p>
 
-          {/* pouch + sachet + capsule box, between the headline and the button */}
-          <div data-reveal data-reveal-delay=".22" onMouseMove={parallax} onMouseLeave={parallaxReset} style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(580px,100%)', height: 'clamp(240px,28vw,340px)', margin: 'clamp(8px,1.2vh,14px) 0' }}>
+          {/* pouch back-left, capsule box in front, blister across it, sachet over everything */}
+          <div data-reveal data-reveal-delay=".22" style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(580px,100%)', height: 'clamp(240px,28vw,340px)', margin: 'clamp(8px,1.2vh,14px) 0' }}>
             <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(16px)', zIndex: 0 }} />
-            <span ref={boxWrapRef} style={{ position: 'absolute', right: '-6%', bottom: '3%', height: '86%', transition: 'transform .3s ease', zIndex: 5 }}>
-              <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box" data-anim style={{ display: 'block', height: '100%', width: 'auto', filter: 'drop-shadow(0 22px 30px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'cta2-bob 10s ease-in-out -3s infinite' }} />
-            </span>
-            <span ref={pouchWrapRef} style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', transition: 'transform .3s ease', zIndex: 2 }}>
-              <img src="assets/img/pouch-new.png" alt="AMAZTRA coffee pouch" data-anim style={{ display: 'block', height: '100%', width: 'auto', filter: 'drop-shadow(0 22px 30px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'cta2-bob 9s ease-in-out infinite' }} />
-            </span>
-            <span ref={sachetWrapRef} style={{ position: 'absolute', left: '26%', bottom: '2%', width: '62%', transition: 'transform .3s ease', zIndex: 4 }}>
-              <img src="assets/img/sachet-new.png" alt="AMAZTRA instant coffee sachet" data-anim style={{ display: 'block', width: '100%', transformOrigin: 'center', transform: 'rotate(-8deg)', filter: 'drop-shadow(0 20px 26px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'cta2-sway 8s ease-in-out infinite' }} />
-            </span>
+            <img src="assets/img/pouch-new.png" alt="AMAZTRA coffee pouch"
+              style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', width: 'auto', zIndex: 1,
+                filter: 'drop-shadow(0 22px 30px rgba(0,0,0,.6))',
+                animation: reduce ? 'none' : 'cta2-bob 9s ease-in-out infinite' }} />
+            <img src="assets/img/capsule-blister.png" alt="AMAZTRA capsule blister pack"
+              style={{ position: 'absolute', left: '58%', bottom: '4%', height: '60%', width: 'auto', zIndex: 4,
+                transformOrigin: 'bottom center', transform: 'rotate(-11deg)',
+                filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.65))',
+                animation: reduce ? 'none' : 'cta2-sway-r 9s ease-in-out -2s infinite' }} />
+            <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box"
+              style={{ position: 'absolute', left: '36%', bottom: '5%', height: '72%', width: 'auto', zIndex: 3,
+                filter: 'drop-shadow(0 22px 34px rgba(0,0,0,.7))',
+                animation: reduce ? 'none' : 'cta2-bob 10s ease-in-out -3s infinite' }} />
+            <img src="assets/img/sachet-new.png" alt="AMAZTRA instant coffee sachet"
+              style={{ position: 'absolute', left: '24%', bottom: '-1%', width: '42%', zIndex: 5,
+                transformOrigin: 'center', transform: 'rotate(-8deg)',
+                filter: 'drop-shadow(0 20px 26px rgba(0,0,0,.7))',
+                animation: reduce ? 'none' : 'cta2-sway 8s ease-in-out infinite' }} />
           </div>
 
           <a data-reveal data-reveal-delay=".3" href={LINKS.shop} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 32px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(15px,1.6vw,17px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
@@ -127,7 +147,6 @@ function FinalCtaDesktop() {
             <span aria-hidden="true" className="cta-arrow" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
             <span aria-hidden="true" data-anim style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'cta-bshine 5s ease-in-out infinite' }} />
           </a>
-          <span data-reveal data-reveal-delay=".38" style={{ display: 'block', opacity: reduce ? 1 : 0, marginTop: '14px', fontFamily: "'Space Mono',monospace", fontSize: '11px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>One store &middot; both formats</span>
         </div>
       </div>
     </section>
@@ -151,7 +170,22 @@ function useIsMobile(bp = 767) {
 function FinalCtaMobile() {
   const rootRef = useRef(null);
   const modelRef = useRef(null);
+  const modelBRef = useRef(null);
   const reduce = prefersReduce();
+
+  // crossfade the coffee model and the capsule model on a slow loop
+  useEffect(() => {
+    if (reduce) return;
+    const a = modelRef.current, b = modelBRef.current;
+    if (!a || !b) return;
+    let showB = false;
+    const id = setInterval(() => {
+      showB = !showB;
+      a.style.opacity = showB ? '0' : '1';
+      b.style.opacity = showB ? '1' : '0';
+    }, 5200);
+    return () => clearInterval(id);
+  }, [reduce]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -183,14 +217,16 @@ function FinalCtaMobile() {
 
   return (
     <section id="brew" ref={rootRef} className="fullpage" style={{ position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: '#141210', fontFamily: "'Space Grotesk',system-ui,sans-serif" }}>
-      <style>{`@keyframes fm-shine{0%{background-position:0 0}100%{background-position:220% 0}}@keyframes fm-btnshine{0%{transform:translateX(-140%) skewX(-18deg)}60%,100%{transform:translateX(300%) skewX(-18deg)}}@keyframes fm-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes fm-sway{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(-6deg) translateY(-6px)}}`}</style>
+      <style>{`@keyframes fm-shine{0%{background-position:0 0}100%{background-position:220% 0}}@keyframes fm-btnshine{0%{transform:translateX(-140%) skewX(-18deg)}60%,100%{transform:translateX(300%) skewX(-18deg)}}@keyframes fm-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes fm-sway{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(-6deg) translateY(-6px)}}@keyframes fm-sway-r{0%,100%{transform:rotate(-11deg) translateY(0)}50%{transform:rotate(-9deg) translateY(-6px)}}`}</style>
       <span aria-hidden="true" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 0, width: '100%', height: '78%', background: 'radial-gradient(ellipse at 50% 82%,rgba(246,183,74,.2),rgba(226,58,52,.08) 46%,transparent 72%)', filter: 'blur(24px)' }} />
       {/* drifting spotlight + rising gold dust, matching the desktop CTA ambience */}
       <span aria-hidden="true" style={{ position: 'absolute', left: '50%', top: '30%', transform: 'translate(-50%,-50%)', width: '420px', height: '420px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(246,183,74,.16),transparent 60%)', filter: 'blur(38px)', animation: reduce ? 'none' : 'cta-sweep 14s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
       {DUST.map((d, i) => (
         <span key={i} aria-hidden="true" style={{ position: 'absolute', left: d.left, bottom: d.bottom, width: `${d.size}px`, height: `${d.size}px`, borderRadius: '50%', background: '#F6E39A', boxShadow: '0 0 6px rgba(246,227,154,.8)', '--dx': d.dx, animation: reduce ? 'none' : `cta-dust ${d.dur} ease-in-out ${d.delay} infinite`, pointerEvents: 'none', zIndex: 0 }} />
       ))}
-      <img ref={modelRef} src="assets/img/model-cut.png" alt="Woman enjoying an AMAZTRA coffee" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 0, height: '82%', width: 'auto', filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', clipPath: reduce ? 'none' : 'inset(0 0 100% 0)', pointerEvents: 'none' }} />
+      <img ref={modelRef} src="assets/img/model-cut.png" alt="Woman enjoying an AMAZTRA coffee" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 0, height: '82%', width: 'auto', filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', clipPath: reduce ? 'none' : 'inset(0 0 100% 0)', transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)', pointerEvents: 'none' }} />
+      {/* capsule model, centred on its own subject (inset in a square frame), crossfading with the coffee model */}
+      <img ref={modelBRef} src="assets/img/model-capsule.png" alt="Woman holding an AMAZTRA capsule box" style={{ position: 'absolute', left: '50%', transform: 'translateX(-55.75%)', bottom: 0, height: '87%', width: 'auto', maxWidth: 'none', opacity: 0, filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)', pointerEvents: 'none' }} />
       <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '34%', background: 'linear-gradient(180deg,#141210 8%,rgba(20,15,13,.4) 60%,transparent)' }} />
       <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '54%', background: 'linear-gradient(180deg,transparent,rgba(20,15,13,.55) 46%,#141210)' }} />
 
@@ -202,19 +238,19 @@ function FinalCtaMobile() {
         {/* spacer lets the model read through */}
         <div style={{ flex: 1, minHeight: '20px' }} />
 
-        {/* floating pouch + sachet (7a), just above the button */}
+        {/* pouch back-left, capsule box in front, blister across it, sachet over everything */}
         <div data-r="0.55" style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(300px,74%)', height: '165px', margin: '0 0 26px' }}>
-          <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(14px)' }} />
-          <img src="assets/img/pouch-new.png" alt="AMAZTRA pouch" style={{ position: 'absolute', zIndex: 2, left: 0, bottom: 0, height: '100%', width: 'auto', filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'fm-bob 9s ease-in-out infinite' }} />
-          <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box" style={{ position: 'absolute', right: '-4%', bottom: '5%', height: '80%', width: 'auto', zIndex: 5, filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.6))' }} />
-          <img src="assets/img/sachet-new.png" alt="AMAZTRA sachet" style={{ position: 'absolute', zIndex: 4, left: '30%', bottom: '8%', width: '64%', transformOrigin: 'center', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
+          <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(14px)', zIndex: 0 }} />
+          <img src="assets/img/pouch-new.png" alt="AMAZTRA coffee pouch" style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', width: 'auto', zIndex: 1, filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'fm-bob 9s ease-in-out infinite' }} />
+          <img src="assets/img/capsule-blister.png" alt="AMAZTRA capsule blister pack" style={{ position: 'absolute', left: '58%', bottom: '4%', height: '60%', width: 'auto', zIndex: 4, transformOrigin: 'bottom center', transform: 'rotate(-11deg)', filter: 'drop-shadow(0 14px 20px rgba(0,0,0,.65))', animation: reduce ? 'none' : 'fm-sway-r 9s ease-in-out -2s infinite' }} />
+          <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box" style={{ position: 'absolute', left: '36%', bottom: '5%', height: '72%', width: 'auto', zIndex: 3, filter: 'drop-shadow(0 16px 24px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-bob 10s ease-in-out -3s infinite' }} />
+          <img src="assets/img/sachet-new.png" alt="AMAZTRA instant coffee sachet" style={{ position: 'absolute', left: '24%', bottom: '-1%', width: '42%', zIndex: 5, transformOrigin: 'center', transform: 'rotate(-8deg)', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
         </div>
 
-        <a data-r="0.7" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
+        <a data-r="0.7" className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
           Shop coffee {'&'} capsules<span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
           <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'fm-btnshine 5s ease-in-out 1.6s infinite' }} />
         </a>
-        <span data-r="0.82" style={{ opacity: reduce ? 1 : 0, marginTop: '12px', fontFamily: "'Space Mono',monospace", fontSize: '10.5px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#8f8578' }}>One store &middot; both formats</span>
       </div>
     </section>
   );

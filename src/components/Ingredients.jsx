@@ -439,6 +439,7 @@ function IngredientsDesktop() {
               {FMTS.map((k) => (
                 <button
                   key={k} type="button" onClick={() => setFmt(k)} aria-pressed={fmt === k}
+                  className={fmt === k ? undefined : 'btn-glow'}
                   style={{
                     border: 0, cursor: 'pointer', padding: '9px 18px', fontFamily: "'Space Grotesk',sans-serif",
                     fontSize: '13px', fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase',
@@ -471,7 +472,7 @@ function IngredientsDesktop() {
                 fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '15px',
                 letterSpacing: '.02em', color: '#8a5f1c',
               }}>{cur.s}</span>
-              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', whiteSpace: 'nowrap' }}>{String(active + 1).padStart(2, '0')}<span style={{ color: '#b3a789' }}> / 06</span></span>
+              <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', whiteSpace: 'nowrap' }}>{String(active + 1).padStart(2, '0')}<span style={{ color: '#b3a789' }}> / 06</span></span>
             </div>
             <h3 ref={nameRef} style={{
               margin: '12px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800,
@@ -489,9 +490,9 @@ function IngredientsDesktop() {
             }}>{cur.d}</p>
             {/* dose of the selected active, on a scale shared by all six in this format */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '18px', maxWidth: '440px' }}>
-              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', whiteSpace: 'nowrap' }}>PER {fmt === 'capsule' ? 'CAPSULE' : 'SACHET'}</span>
+              <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', whiteSpace: 'nowrap' }}>PER {fmt === 'capsule' ? 'CAPSULE' : 'SACHET'}</span>
               <span data-card-dose style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '20px', color: '#221a12', whiteSpace: 'nowrap' }}>{doseText(DOSE[fmt][active])}</span>
-              <span data-card-delta style={{ opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Mono',monospace", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px', whiteSpace: 'nowrap' }}>{multText(active)}</span>
+              <span data-card-delta style={{ opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px', whiteSpace: 'nowrap' }}>{multText(active)}</span>
               <span aria-hidden="true" style={{ flex: 1, height: '4px', borderRadius: '2px', background: 'rgba(23,17,14,.15)', overflow: 'hidden' }}>
                 <span style={{ display: 'block', height: '100%', width: barPct(DOSE[fmt][active]), borderRadius: '2px', background: 'linear-gradient(90deg,#8a5f1c,#C99A34)', transition: 'width .6s cubic-bezier(.23,1,.32,1)' }} />
               </span>
@@ -541,13 +542,13 @@ function IngredientsDesktop() {
                   <span style={iconWrapStyle(isActive)}><Icon name={ICON_FOR[idx]} /></span>
                 </span>
                 <span style={{
-                  position: 'relative', zIndex: 2, fontFamily: "'Marcellus',serif", fontWeight: 400,
-                  fontSize: '11px', letterSpacing: '.03em', textTransform: 'uppercase',
+                  position: 'relative', zIndex: 2, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600,
+                  fontSize: '11px', letterSpacing: '.06em', textTransform: 'uppercase',
                 }}>{ing.k}</span>
                 <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span data-dose style={{ fontFamily: "'Space Mono',monospace", fontSize: '11px', fontWeight: 700, color: isActive ? '#fff' : '#C6A24C' }}>{doseText(DOSE[fmt][idx])}</span>
+                  <span data-dose style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '11px', fontWeight: 700, color: isActive ? '#fff' : '#C6A24C' }}>{doseText(DOSE[fmt][idx])}</span>
                   <span data-delta style={{
-                    opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Mono',monospace", fontSize: '9px',
+                    opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontSize: '9px',
                     fontWeight: 700, letterSpacing: '.04em', color: '#141210',
                     background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '0 4px',
                   }}>{multText(idx)}</span>
@@ -597,8 +598,8 @@ function mobileNodeStyle(idx, active) {
     transform: 'translate(-50%,-50%) scale(var(--ns))',
     '--ns': active ? 1.06 : 1,
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: active ? '6px' : '0',
-    fontFamily: "'Marcellus',serif", fontWeight: 400, fontSize: '9px',
-    letterSpacing: '.03em', textTransform: 'uppercase',
+    fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '9px',
+    letterSpacing: '.06em', textTransform: 'uppercase',
     padding: '7px 10px', borderRadius: '2px', cursor: 'pointer', whiteSpace: 'nowrap',
     transition: 'all .3s',
     background: active ? '#E23A34' : 'rgba(23,17,14,.82)',
@@ -686,7 +687,7 @@ function IngredientsMobile() {
         <div role="group" aria-label="Choose format" style={{ display: 'inline-flex', border: '1px solid rgba(23,17,14,.28)', borderRadius: '999px', overflow: 'hidden', background: 'rgba(23,17,14,.06)' }}>
           {FMTS.map((k) => (
             <button
-              key={k} type="button" className="tap" onClick={() => setFmt(k)} aria-pressed={fmt === k}
+              key={k} type="button" className={'tap' + (fmt === k ? '' : ' btn-glow')} onClick={() => setFmt(k)} aria-pressed={fmt === k}
               style={{
                 border: 0, cursor: 'pointer', padding: '11px 16px', minHeight: '44px',
                 fontFamily: "'Space Grotesk',sans-serif", fontSize: '12px', fontWeight: 600,
@@ -721,7 +722,7 @@ function IngredientsMobile() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
           <span style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '17px', color: '#221a12' }}>{doseText(DOSE[fmt][active])}</span>
           {fmt === 'capsule' ? (
-            <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px' }}>{multText(active)}</span>
+            <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px' }}>{multText(active)}</span>
           ) : null}
           <span style={{ flex: 1, height: '3px', borderRadius: '2px', background: 'rgba(23,17,14,.15)', overflow: 'hidden' }}>
             <span style={{ display: 'block', height: '100%', width: barPct(DOSE[fmt][active]), borderRadius: '2px', background: 'linear-gradient(90deg,#C99A34,#8a5f1c)', transition: 'width .6s cubic-bezier(.23,1,.32,1)' }} />
@@ -731,11 +732,11 @@ function IngredientsMobile() {
 
         {/* progress rail through all six */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '18px' }}>
-          <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '12px', color: '#8a5f1c' }}>{String(active + 1).padStart(2, '0')}</span>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '12px', color: '#8a5f1c' }}>{String(active + 1).padStart(2, '0')}</span>
           <div style={{ flex: 1, height: '3px', borderRadius: '999px', background: 'rgba(23,17,14,.15)', overflow: 'hidden' }}>
             <span ref={barRef} style={{ display: 'block', height: '100%', width: reduce ? '100%' : '0%', background: 'linear-gradient(90deg,#E23A34,#C6A24C)' }} />
           </div>
-          <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '12px', color: '#b3a789' }}>06</span>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '12px', color: '#b3a789' }}>06</span>
         </div>
 
         {/* labelled tabs: tap one, or press and drag across them to scrub */}
@@ -751,7 +752,7 @@ function IngredientsMobile() {
             <button
               key={ing.k}
               type="button"
-              className="tap"
+              className="tap btn-glow"
               aria-label={ing.k}
               aria-pressed={idx === active}
               onClick={() => setActive(idx)}

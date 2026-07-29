@@ -150,6 +150,51 @@ button{ font: inherit; }
   .hero-sticky, .fullpage { min-height:100dvh; scroll-snap-align:start; scroll-snap-stop:always; }
 }
 
+/* ---- Origin format toggle: sliding gold thumb, press bounce, hover affordance ---- */
+.origin-toggle{ position:relative; display:inline-flex; padding:4px; border-radius:999px;
+  border:1px solid rgba(198,162,76,.35); background:rgba(20,18,16,.6);
+  -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+.origin-toggle__thumb{ position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 4px);
+  border-radius:999px; background:linear-gradient(180deg,#F6E39A,#C99A34);
+  box-shadow:0 6px 16px rgba(201,154,52,.35); transform:translateX(0);
+  transition:transform .42s cubic-bezier(.5,1.5,.4,1); z-index:0; pointer-events:none; }
+.origin-toggle[data-fmt="capsule"] .origin-toggle__thumb{ transform:translateX(100%); }
+.origin-tab{ position:relative; z-index:1; flex:1 1 0; min-width:104px; padding:9px 22px;
+  border:0; border-radius:999px; background:transparent; cursor:pointer;
+  font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12px; letter-spacing:.08em;
+  text-transform:uppercase; color:#cfc4b2; transition:color .3s ease, transform .14s ease; }
+.origin-tab.is-on{ color:#241a10; }
+.origin-tab:not(.is-on):hover{ color:#F6E39A; }
+.origin-tab:active{ transform:scale(.92); }
+@media (prefers-reduced-motion: reduce){
+  .origin-toggle__thumb{ transition:none; }
+  .origin-tab{ transition:none; }
+  .origin-tab:active{ transform:none; }
+}
+
+/* ---- shop CTA affordance: lift + gold glow on hover, press on active ---- */
+.cta-btn{ transition:transform .18s ease, box-shadow .25s ease, background .25s ease; }
+@media (hover:hover){
+  .cta-btn:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(201,154,52,.32); background:rgba(20,16,12,.74); }
+}
+.cta-btn:active{ transform:translateY(0) scale(.98); }
+@media (prefers-reduced-motion: reduce){ .cta-btn{ transition:none; } .cta-btn:hover,.cta-btn:active{ transform:none; } }
+
+/* ---- reusable click affordance ----
+   .btn-lift: standalone buttons/chips (lift + brighten on hover, press on click).
+   .btn-glow: segmented tabs / transform-positioned controls (brighten only, no
+   transform, so it never disturbs a control positioned by transform). */
+.btn-lift{ transition:transform .16s ease, filter .2s ease, box-shadow .25s ease; }
+@media (hover:hover){ .btn-lift:hover{ transform:translateY(-2px); filter:brightness(1.07); } }
+.btn-lift:active{ transform:translateY(0) scale(.97); }
+.btn-glow{ transition:filter .2s ease, background .25s ease, color .25s ease; }
+@media (hover:hover){ .btn-glow:hover{ filter:brightness(1.14); } }
+.btn-glow:active{ filter:brightness(.92); }
+@media (prefers-reduced-motion: reduce){
+  .btn-lift, .btn-glow{ transition:none; }
+  .btn-lift:hover, .btn-lift:active{ transform:none; }
+}
+
 /* ---- draggable spin pouch ---- */
 .spin-pouch:focus { outline:none; }
 .spin-pouch:focus-visible { outline:2px solid var(--gold,#C6A24C); border-radius:16px; }

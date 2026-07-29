@@ -146,7 +146,7 @@ function FormatTabs({ fmt, onFmt, small }) {
       {ORDER.map((k) => {
         const on = k === fmt;
         return (
-          <button key={k} type="button" role="tab" aria-selected={on} onClick={() => onFmt(k)} style={{
+          <button key={k} type="button" role="tab" aria-selected={on} className={on ? undefined : 'btn-glow'} onClick={() => onFmt(k)} style={{
             padding: small ? '10px 16px' : '11px 20px', minHeight: '44px',
             border: '1px solid #17110e', borderRadius: '2px', cursor: on ? 'default' : 'pointer',
             fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600,
@@ -188,7 +188,7 @@ function LabelModal({ open, onClose, reduce, fmt, onFmt }) {
         <div style={{ background: '#C11A22', padding: '18px 26px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px', flexWrap: 'wrap' }}>
           <div>
             <div style={{ fontFamily: "'Cinzel',serif", fontWeight: 700, fontSize: '18px', letterSpacing: '.14em', color: '#F6E39A' }}>AMAZTRA</div>
-            <div style={{ fontFamily: "'Space Mono',monospace", fontSize: '10px', letterSpacing: '.24em', color: 'rgba(255,246,230,.85)', textTransform: 'uppercase', marginTop: '3px' }}>{L.kind}</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10px', letterSpacing: '.24em', color: 'rgba(255,246,230,.85)', textTransform: 'uppercase', marginTop: '3px' }}>{L.kind}</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div role="tablist" aria-label="Choose a format" style={{ display: 'flex', gap: '5px' }}>
@@ -232,7 +232,7 @@ function LabelModal({ open, onClose, reduce, fmt, onFmt }) {
           </div>
           <div>
             <NutritionFactsBox nf={L.nf} />
-            <div style={{ marginTop: '16px', fontFamily: "'Space Mono',monospace", fontSize: '11px', color: '#6b5a44', lineHeight: 1.7 }}>
+            <div style={{ marginTop: '16px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '11px', color: '#6b5a44', lineHeight: 1.7 }}>
               {L.specs.map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}><span style={{ color: '#8a5f1c' }}>{k}</span><span>{v}</span></div>
               ))}
@@ -467,9 +467,9 @@ function WhatsInsideDesktop() {
             <div style={{ margin: '0 0 32px', maxWidth: '380px' }}>
               <div data-print style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <span id="wi-cal" ref={calRef} style={{ fontFamily: "'Anton',sans-serif", fontSize: 'clamp(96px,15vw,150px)', lineHeight: 0.8, letterSpacing: '-.02em', color: '#221a12' }}>{L.kcal}</span>
-                <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', marginTop: '14px', lineHeight: 1.5 }}>{L.unit[0]}<br />{L.unit[1]}<br />{L.unit[2]}</span>
+                <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', marginTop: '14px', lineHeight: 1.5 }}>{L.unit[0]}<br />{L.unit[1]}<br />{L.unit[2]}</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 26px', marginTop: '18px', fontFamily: "'Space Mono',monospace" }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 26px', marginTop: '18px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500 }}>
                 {L.macros.map(([k, v]) => (
                   <div key={k} data-print style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderTop: '1px solid rgba(122,84,22,.35)', fontSize: '13.5px', color: '#221a12' }}>
                     <span style={{ color: '#8a5f1c' }}>{k}</span><span>{v}</span>
@@ -479,7 +479,7 @@ function WhatsInsideDesktop() {
             </div>
           </div>
 
-          <button type="button" onClick={() => setOpen(true)} style={{
+          <button type="button" className="btn-lift" onClick={() => setOpen(true)} style={{
             display: 'inline-flex', alignItems: 'center', gap: '11px', padding: '15px 26px', minHeight: '44px',
             border: '1px solid #17110e', borderRadius: '3px', cursor: 'pointer',
             fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '15px', letterSpacing: '.01em',
@@ -514,7 +514,7 @@ function WhatsInsideDesktop() {
                   <span key={d} style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#17110e', opacity: 0.3, animation: reduce ? 'none' : `tz-dot 1.5s ease-in-out ${d * 0.2}s infinite` }} />
                 ))}
               </span>
-              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#5a3a20' }}>Tap to zoom</span>
+              <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#5a3a20' }}>Tap to zoom</span>
             </span>
           </button>
         </div>
@@ -613,9 +613,9 @@ function WhatsInsideMobile() {
           boxShadow: '0 0 16px rgba(246,227,154,.75)' }} />
         <div data-r data-print style={{ opacity: reduce ? 1 : 0, display: 'flex', alignItems: 'flex-start', gap: '12px', marginTop: '12px' }}>
           <span ref={calRef} style={{ fontFamily: "'Anton',sans-serif", fontSize: 'clamp(104px,30vw,132px)', lineHeight: 0.78, letterSpacing: '-.02em', color: '#221a12' }}>{L.kcal}</span>
-          <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', marginTop: '12px', lineHeight: 1.5 }}>{L.unit[0]}<br />{L.unit[1]}<br />{L.unit[2]}</span>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', marginTop: '12px', lineHeight: 1.5 }}>{L.unit[0]}<br />{L.unit[1]}<br />{L.unit[2]}</span>
         </div>
-        <div data-r style={{ opacity: reduce ? 1 : 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 26px', marginTop: '10px', fontFamily: "'Space Mono',monospace" }}>
+        <div data-r style={{ opacity: reduce ? 1 : 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 26px', marginTop: '10px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500 }}>
           {L.macros.map(([k, v]) => (
             <div key={k} data-print style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderTop: '1px solid rgba(122,84,22,.35)', fontSize: '13.5px', color: '#221a12' }}><span style={{ color: '#8a5f1c' }}>{k}</span><span>{v}</span></div>
           ))}
@@ -631,12 +631,12 @@ function WhatsInsideMobile() {
               {reduce ? null : <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(23,17,14,.4)', animation: 'tz-ring 2.2s ease-out infinite' }} />}
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#F6E39A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3M11 8v6M8 11h6" /></svg>
             </span>
-            <span style={{ fontFamily: "'Space Mono',monospace", fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#5a3a20' }}>Tap to zoom</span>
+            <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#5a3a20' }}>Tap to zoom</span>
           </span>
         </button>
       </div>
 
-      <button data-r type="button" onClick={() => setOpen(true)} style={{ opacity: reduce ? 1 : 0, alignSelf: 'center', width: 'fit-content', marginTop: '8px', display: 'inline-flex', alignItems: 'center', gap: '9px', padding: '12px 20px', minHeight: '44px', border: 0, borderRadius: '3px', cursor: 'pointer', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '14px', color: '#efe6d4', background: '#17110e', boxShadow: '0 12px 26px rgba(60,40,16,.28)' }}>
+      <button data-r type="button" className="btn-lift" onClick={() => setOpen(true)} style={{ opacity: reduce ? 1 : 0, alignSelf: 'center', width: 'fit-content', marginTop: '8px', display: 'inline-flex', alignItems: 'center', gap: '9px', padding: '12px 20px', minHeight: '44px', border: 0, borderRadius: '3px', cursor: 'pointer', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '14px', color: '#efe6d4', background: '#17110e', boxShadow: '0 12px 26px rgba(60,40,16,.28)' }}>
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#F6E39A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
         Read the Full Label
       </button>

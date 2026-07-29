@@ -4,7 +4,62 @@ const EASE = 'cubic-bezier(.16,1,.3,1)';
 const prefersReduce = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const ORIGIN_PUNCH = 'it should brew.';
+// One Origin section, two formats behind a toggle. The shared headline ("Beauty
+// shouldn't feel like work") carries the thesis; the payoff line, copy and clip
+// swap per format. objPos biases the cover crop so the model's face clears the
+// top edge of the landscape media frame.
+const STORY = {
+  coffee: {
+    eyebrow: 'The origin',
+    headLead: 'feel like',      // headline line 3 reads "feel like [strikeWord]"
+    strikeWord: 'work',
+    punch: 'it should brew.',
+    desc: 'Self-care quietly became a chore. But you never skipped the first warm cup, so we folded the actives right into it.',
+    video: 'assets/video/origin-coffee.mp4',
+    poster: 'assets/video/origin-coffee-poster.jpg',
+    objPos: '50% 22%',
+  },
+  capsule: {
+    eyebrow: 'The origin',
+    headLead: 'feel',
+    strikeWord: 'complicated',
+    punch: 'it should come in a capsule.',
+    desc: '',                   // capsule closes on the payoff line, no body copy
+    video: 'assets/video/origin.mp4',
+    poster: 'assets/video/origin-poster.jpg',
+    objPos: '50% 26%',
+  },
+};
+
+// Coffee / Capsule format toggle: a gold thumb slides between the two, the labels
+// crossfade, the active option pulses, and each tap gives a small press bounce.
+// Styling lives in index.css (.origin-toggle / .origin-tab) so :hover and :active
+// affordance works. Shared by both layouts.
+function OriginToggle({ fmt, setFmt }) {
+  const thumbRef = useRef(null);
+  const prev = useRef(fmt);
+  useEffect(() => {
+    if (prev.current === fmt) return;
+    prev.current = fmt;
+    const t = thumbRef.current;
+    if (t && !prefersReduce()) {
+      t.animate([
+        { boxShadow: '0 6px 16px rgba(201,154,52,.35)' },
+        { boxShadow: '0 10px 30px rgba(246,227,154,.85)', offset: 0.5 },
+        { boxShadow: '0 6px 16px rgba(201,154,52,.35)' },
+      ], { duration: 560, easing: 'ease-out' });
+    }
+  }, [fmt]);
+  return (
+    <div className="origin-toggle" data-fmt={fmt} role="tablist" aria-label="Choose format">
+      <span ref={thumbRef} className="origin-toggle__thumb" aria-hidden="true" />
+      {['coffee', 'capsule'].map((k) => (
+        <button key={k} type="button" role="tab" aria-selected={fmt === k}
+          className={'origin-tab' + (fmt === k ? ' is-on' : '')} onClick={() => setFmt(k)}>{k}</button>
+      ))}
+    </div>
+  );
+}
 
 /**
  * Origin — "Editorial Depth". Two columns: a vertical "THE ORIGIN" rail and the
@@ -12,13 +67,79 @@ const ORIGIN_PUNCH = 'it should brew.';
  * On view the eyebrow fades in, the headline lines flip up out of their clips, a
  * red strike wipes across "work", the gold punch line rises and catches an ember
  * glow with sparks, and the media reveals bottom-up. Ambient embers drift up the
- * panel. Type matches the site: Anton headline/punch, Space Mono rail, Space
- * Grotesk body. The video is a marked placeholder slot — a real mp4 at
+ * panel. Type matches the site: Anton headline/punch, Space Grotesk rail and
+ * body. The video is a marked placeholder slot, a real mp4 at
  * assets/video/brew.mp4 will play automatically. Reduced motion shows all at rest.
  */
 function StoryDesktop() {
   const rootRef = useRef(null);
   const emberRef = useRef(null);
+  const coffeeVidRef = useRef(null);
+  const capsuleVidRef = useRef(null);
+  const punchRef = useRef(null);
+  const descRef = useRef(null);
+  const sweepRef = useRef(null);
+  const prevFmt = useRef('coffee');
+  const [fmt, setFmt] = useState('coffee');
+  const cfg = STORY[fmt];
+
+  // Toggle transition: cross-dissolve the two video layers with a directional
+  // clip-wipe, run a coloured light sweep across the frame (warm toward coffee,
+  // clean gold toward capsule), and re-enter the payoff line with an ember flash.
+  // Guard on the previous value (not a flipped boolean) so React StrictMode's
+  // double-invoked mount effect never fires the transition on load.
+  useEffect(() => {
+    if (prevFmt.current === fmt) return;
+    prevFmt.current = fmt;
+    const show = fmt === 'capsule' ? capsuleVidRef.current : coffeeVidRef.current;
+    const hide = fmt === 'capsule' ? coffeeVidRef.current : capsuleVidRef.current;
+    const punch = punchRef.current, desc = descRef.current, sweep = sweepRef.current;
+    [show, hide, punch, desc, sweep].forEach((el) => { if (el) el.getAnimations().forEach((a) => a.cancel()); });
+    if (prefersReduce()) {
+      if (show) show.style.opacity = '1';
+      if (hide) hide.style.opacity = '0';
+      return;
+    }
+    const EO = 'cubic-bezier(.16,1,.3,1)';
+    const toCapsule = fmt === 'capsule';
+    const dir = toCapsule ? 1 : -1;                 // capsule wipes L->R, coffee R->L
+    if (show && hide) {
+      show.style.opacity = '1';
+      show.animate([
+        { opacity: 0, transform: 'scale(1.07)', clipPath: dir > 0 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)' },
+        { opacity: 1, offset: 0.55 },
+        { opacity: 1, transform: 'scale(1)', clipPath: 'inset(0 0 0 0)' },
+      ], { duration: 900, easing: EO, fill: 'both' });
+      hide.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 560, easing: 'ease', fill: 'both' });
+    }
+    if (sweep) {
+      sweep.style.background = toCapsule
+        ? 'linear-gradient(90deg,transparent,rgba(246,227,154,.9),transparent)'
+        : 'linear-gradient(90deg,transparent,rgba(226,58,52,.5),rgba(246,183,74,.85),transparent)';
+      sweep.animate([
+        { transform: `translateX(${dir > 0 ? '-140%' : '140%'}) skewX(-14deg)`, opacity: 0 },
+        { opacity: 1, offset: 0.35 },
+        { transform: `translateX(${dir > 0 ? '140%' : '-140%'}) skewX(-14deg)`, opacity: 0 },
+      ], { duration: 780, easing: EO, fill: 'both' });
+    }
+    // payoff line re-enters (no blur: it is background-clip:text) with an ember pop
+    if (punch) {
+      punch.animate([
+        { opacity: 0, transform: 'translateY(24px) scale(.955)' },
+        { opacity: 1, transform: 'none' },
+      ], { duration: 720, delay: 140, easing: 'cubic-bezier(.2,1.1,.3,1)', fill: 'both' });
+    }
+    if (desc) {
+      if (cfg.desc) {
+        desc.animate([
+          { opacity: 0, transform: 'translateY(14px)', filter: 'blur(4px)' },
+          { opacity: 1, transform: 'none', filter: 'blur(0)' },
+        ], { duration: 620, delay: 220, easing: EO, fill: 'both' });
+      } else {
+        desc.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 340, easing: 'ease', fill: 'both' });
+      }
+    }
+  }, [fmt]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -126,7 +247,7 @@ function StoryDesktop() {
       <div className="story-grid" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr .82fr', alignItems: 'center', gap: 0 }}>
         {/* left: rail + stacked headline + punch + desc */}
         <div style={{ position: 'relative', zIndex: 2, minWidth: 0, display: 'flex', gap: 'clamp(18px,2vw,26px)' }}>
-          <span data-eyebrow className="story-rail" style={{ opacity: 0, writingMode: 'vertical-rl', transform: 'rotate(180deg)', alignSelf: 'flex-start', paddingTop: '4px', fontFamily: "'Space Mono',monospace", fontSize: '12px', letterSpacing: '.24em', textTransform: 'uppercase', color: '#C6A24C', whiteSpace: 'nowrap' }}>The origin</span>
+          <span data-eyebrow className="story-rail" style={{ opacity: 0, writingMode: 'vertical-rl', transform: 'rotate(180deg)', alignSelf: 'flex-start', paddingTop: '4px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '12px', letterSpacing: '.24em', textTransform: 'uppercase', color: '#C6A24C', whiteSpace: 'nowrap' }}>{cfg.eyebrow}</span>
 
           <div style={{ minWidth: 0 }}>
             <h2 style={{ margin: 0, fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(40px,5.4vw,66px)', lineHeight: 1.16, letterSpacing: '-.02em', color: '#EDE4D3' }}>
@@ -134,23 +255,27 @@ function StoryDesktop() {
               <span style={{ display: 'block', overflow: 'hidden' }}><span className="story-cw" style={{ display: 'inline-block', opacity: 0, transform: 'translateY(110%)' }}>shouldn&rsquo;t</span></span>
               <span style={{ display: 'block', overflow: 'hidden' }}>
                 <span className="story-cw" style={{ display: 'inline-block', opacity: 0, transform: 'translateY(110%)' }}>
-                  feel like{' '}
+                  {cfg.headLead}{' '}
                   <span style={{ position: 'relative', color: '#8f8578' }}>
-                    work
+                    {cfg.strikeWord}
                     <span data-strike aria-hidden="true" style={{ position: 'absolute', left: '-4%', right: '-4%', top: '52%', height: 'clamp(5px,.7vw,9px)', background: '#E23A34', transform: 'rotate(-3deg) scaleX(0)', transformOrigin: 'left' }} />
                   </span>
                 </span>
               </span>
             </h2>
 
-            <p id="story-punch" data-punch style={{ opacity: 0, position: 'relative', margin: 'clamp(16px,2.4vh,26px) 0 0', fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(48px,6.4vw,84px)', lineHeight: 0.9, letterSpacing: '-.01em', background: 'linear-gradient(180deg,#F6E39A,#A9761B)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', zIndex: 3 }}>
-              {ORIGIN_PUNCH}
+            <p ref={punchRef} id="story-punch" data-punch style={{ opacity: 0, position: 'relative', margin: 'clamp(16px,2.4vh,26px) 0 0', fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(48px,6.4vw,84px)', lineHeight: 0.9, letterSpacing: '-.01em', background: 'linear-gradient(180deg,#F6E39A,#A9761B)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', zIndex: 3 }}>
+              {cfg.punch}
               <span data-sparks aria-hidden="true" style={{ position: 'absolute', inset: '-30% 0 0', pointerEvents: 'none' }} />
             </p>
 
-            <p data-desc style={{ opacity: 0, margin: 'clamp(24px,4vh,36px) 0 0', maxWidth: '38ch', fontSize: 'clamp(15px,1.6vw,18px)', lineHeight: 1.6, color: '#cfc4b2' }}>
-              Self-care quietly became a chore. But you never skipped the first warm cup, so we folded the actives right there.
+            <p ref={descRef} data-desc style={{ opacity: 0, margin: 'clamp(24px,4vh,36px) 0 0', maxWidth: '38ch', fontSize: 'clamp(15px,1.6vw,18px)', lineHeight: 1.6, color: '#cfc4b2' }}>
+              {cfg.desc}
             </p>
+
+            <div style={{ marginTop: 'clamp(22px,3.4vh,34px)' }}>
+              <OriginToggle fmt={fmt} setFmt={setFmt} />
+            </div>
           </div>
         </div>
 
@@ -158,8 +283,10 @@ function StoryDesktop() {
         <div className="story-media-wrap" style={{ position: 'relative', zIndex: 1, minWidth: 0, height: 'clamp(380px,58vh,520px)', marginLeft: 'clamp(-96px,-6vw,-64px)' }}>
           <span aria-hidden="true" style={{ position: 'absolute', inset: '-12%', borderRadius: '50%', background: 'radial-gradient(circle,rgba(226,58,52,.3),rgba(246,183,74,.12) 46%,transparent 70%)', filter: 'blur(34px)', pointerEvents: 'none', animation: 'glow-pulse 6s ease-in-out infinite' }} />
           <div data-media className="story-media" style={{ position: 'relative', height: '100%', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(246,227,154,.22)', boxShadow: '0 34px 70px rgba(0,0,0,.55)', background: 'linear-gradient(160deg,#2a1c15,#171310)', clipPath: 'inset(0 0 100% 0)' }}>
-            <video src="assets/video/brew.mp4" poster="assets/video/brew-poster.jpg" autoPlay loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            <span aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,.35)', borderRadius: 'inherit' }} />          </div>
+            <video ref={coffeeVidRef} src={STORY.coffee.video} poster={STORY.coffee.poster} autoPlay loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.coffee.objPos, display: 'block', zIndex: 1 }} />
+            <video ref={capsuleVidRef} src={STORY.capsule.video} poster={STORY.capsule.poster} autoPlay loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.capsule.objPos, display: 'block', opacity: 0, zIndex: 1 }} />
+            <span ref={sweepRef} aria-hidden="true" style={{ position: 'absolute', top: '-10%', bottom: '-10%', left: 0, width: '60%', opacity: 0, pointerEvents: 'none', mixBlendMode: 'screen', filter: 'blur(6px)', zIndex: 2 }} />
+            <span aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,.35)', borderRadius: 'inherit', zIndex: 3 }} />          </div>
         </div>
       </div>
     </section>
@@ -189,7 +316,45 @@ function StoryMobile() {
   const strikeRef = useRef(null);
   const punchRef = useRef(null);
   const descRef = useRef(null);
+  const coffeeVidRef = useRef(null);
+  const capsuleVidRef = useRef(null);
+  const prevFmt = useRef('coffee');
+  const [fmt, setFmt] = useState('coffee');
+  const cfg = STORY[fmt];
   const reduce = prefersReduce();
+
+  // Toggle transition: cross-dissolve the two full-bleed clips with a directional
+  // clip-wipe and re-enter the payoff line and copy. Prev-value guard keeps
+  // StrictMode's double-mount from firing it on load.
+  useEffect(() => {
+    if (prevFmt.current === fmt) return;
+    prevFmt.current = fmt;
+    const show = fmt === 'capsule' ? capsuleVidRef.current : coffeeVidRef.current;
+    const hide = fmt === 'capsule' ? coffeeVidRef.current : capsuleVidRef.current;
+    const punch = punchRef.current, desc = descRef.current;
+    [show, hide, punch, desc].forEach((el) => { if (el) el.getAnimations().forEach((a) => a.cancel()); });
+    if (prefersReduce()) {
+      if (show) show.style.opacity = '1';
+      if (hide) hide.style.opacity = '0';
+      return;
+    }
+    const EO = 'cubic-bezier(.16,1,.3,1)';
+    const dir = fmt === 'capsule' ? 1 : -1;
+    if (show && hide) {
+      show.style.opacity = '1';
+      show.animate([
+        { opacity: 0, clipPath: dir > 0 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)' },
+        { opacity: 1, offset: 0.6 },
+        { opacity: 1, clipPath: 'inset(0 0 0 0)' },
+      ], { duration: 820, easing: EO, fill: 'both' });
+      hide.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 520, easing: 'ease', fill: 'both' });
+    }
+    if (punch) punch.animate([{ opacity: 0, transform: 'translateY(22px) scale(.955)' }, { opacity: 1, transform: 'none' }], { duration: 680, delay: 120, easing: 'cubic-bezier(.2,1.1,.3,1)', fill: 'both' });
+    if (desc) {
+      if (cfg.desc) desc.animate([{ opacity: 0, transform: 'translateY(12px)', filter: 'blur(4px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 560, delay: 200, easing: EO, fill: 'both' });
+      else desc.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 320, easing: 'ease', fill: 'both' });
+    }
+  }, [fmt]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -223,14 +388,18 @@ function StoryMobile() {
     <section id="story" ref={rootRef} className="fullpage" style={{ position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: '#141210', fontFamily: "'Space Grotesk',system-ui,sans-serif" }}>
       <style>{`@keyframes st-ken{from{transform:scale(1.03) translateY(0)}to{transform:scale(1.18) translateY(-16px)}}`}</style>
       <div aria-hidden="true" style={{ position: 'absolute', inset: 0, animation: reduce ? 'none' : 'st-ken 16s ease-in-out infinite alternate' }}>
-        <video src="assets/video/brew.mp4" poster="assets/video/brew-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <video ref={coffeeVidRef} src={STORY.coffee.video} poster={STORY.coffee.poster} autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.coffee.objPos, display: 'block' }} />
+        <video ref={capsuleVidRef} src={STORY.capsule.video} poster={STORY.capsule.poster} autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.capsule.objPos, display: 'block', opacity: 0 }} />
       </div>
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(18,15,13,.5) 0%,rgba(18,15,13,0) 26%,rgba(18,15,13,.5) 58%,rgba(18,15,13,.94) 100%)' }} />
       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '0 clamp(24px,7vw,34px) clamp(48px,8vh,72px)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <span ref={pillRef} style={{ alignSelf: 'flex-start', opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#C6A24C' }}>The origin</span>
-        <h2 ref={headRef} style={{ margin: '6px 0 0', opacity: reduce ? 1 : 0, fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(34px,10vw,46px)', lineHeight: 1.04, letterSpacing: '-.01em', color: '#EDE4D3', textShadow: '0 2px 20px rgba(0,0,0,.6)' }}>Beauty shouldn&rsquo;t feel like <span style={{ position: 'relative', color: '#8f8578' }}>work<span ref={strikeRef} aria-hidden="true" style={{ position: 'absolute', left: '-4%', right: '-4%', top: '52%', height: 'clamp(5px,1.6vw,8px)', background: '#E23A34', transform: 'rotate(-3deg) scaleX(0)', transformOrigin: 'left' }} /></span></h2>
-        <p ref={punchRef} style={{ margin: '4px 0 0', opacity: reduce ? 1 : 0, fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(50px,15vw,64px)', lineHeight: 0.86, letterSpacing: '-.01em', background: 'linear-gradient(180deg,#F6E39A,#A9761B)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>it should brew.</p>
-        <p ref={descRef} style={{ margin: '10px 0 0', opacity: reduce ? 1 : 0, maxWidth: '40ch', fontSize: 'clamp(14px,4vw,16px)', lineHeight: 1.6, color: '#e9e0d0', textShadow: '0 1px 10px rgba(0,0,0,.7)' }}>Self-care quietly became a chore. But you never skipped the first warm cup, so we folded the actives right into it.</p>
+        <span ref={pillRef} style={{ alignSelf: 'flex-start', opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '13px', letterSpacing: '.1em', textTransform: 'uppercase', color: '#C6A24C' }}>{cfg.eyebrow}</span>
+        <h2 ref={headRef} style={{ margin: '6px 0 0', opacity: reduce ? 1 : 0, fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(34px,10vw,46px)', lineHeight: 1.04, letterSpacing: '-.01em', color: '#EDE4D3', textShadow: '0 2px 20px rgba(0,0,0,.6)' }}>Beauty shouldn&rsquo;t {cfg.headLead} <span style={{ position: 'relative', color: '#8f8578' }}>{cfg.strikeWord}<span ref={strikeRef} aria-hidden="true" style={{ position: 'absolute', left: '-4%', right: '-4%', top: '52%', height: 'clamp(5px,1.6vw,8px)', background: '#E23A34', transform: 'rotate(-3deg) scaleX(0)', transformOrigin: 'left' }} /></span></h2>
+        <p ref={punchRef} style={{ margin: '4px 0 0', opacity: reduce ? 1 : 0, fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(50px,15vw,64px)', lineHeight: 0.86, letterSpacing: '-.01em', background: 'linear-gradient(180deg,#F6E39A,#A9761B)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>{cfg.punch}</p>
+        <p ref={descRef} style={{ margin: '10px 0 0', opacity: reduce ? 1 : 0, maxWidth: '40ch', fontSize: 'clamp(14px,4vw,16px)', lineHeight: 1.6, color: '#e9e0d0', textShadow: '0 1px 10px rgba(0,0,0,.7)' }}>{cfg.desc}</p>
+        <div style={{ marginTop: '6px' }}>
+          <OriginToggle fmt={fmt} setFmt={setFmt} />
+        </div>
       </div>
     </section>
   );

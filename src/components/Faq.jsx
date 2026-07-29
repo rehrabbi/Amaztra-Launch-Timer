@@ -45,7 +45,7 @@ function FaqDesktop() {
         ';padding:10px 13px;font-size:13px;line-height:1.4;' + (instant ? '' : 'animation:fp-msgin .4s cubic-bezier(.2,1.2,.4,1) both;');
       b.textContent = text;
       const t = document.createElement('p');
-      t.style.cssText = 'margin:3px 5px 0;font-family:Space Mono,monospace;font-size:9px;color:#8f8578;text-align:' + (out ? 'right' : 'left') + ';';
+      t.style.cssText = "margin:3px 5px 0;font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:9.5px;color:#8f8578;text-align:" + (out ? 'right' : 'left') + ';';
       t.textContent = stamp;
       w.appendChild(b); w.appendChild(t);
       th.appendChild(w); th.scrollTop = th.scrollHeight;
@@ -196,7 +196,7 @@ function FaqDesktop() {
             }}>
               <div style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                fontFamily: "'Space Mono',monospace", fontSize: '11px', color: '#cfc4b2', marginBottom: '12px',
+                fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '11px', color: '#cfc4b2', marginBottom: '12px',
               }}>
                 <span>8:02</span>
                 <button
@@ -209,7 +209,7 @@ function FaqDesktop() {
                   }}
                 >
                   <span aria-hidden="true" className="tap" style={{
-                    fontFamily: "'Space Mono',monospace", fontSize: '10px', color: '#C6A24C',
+                    fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10px', color: '#C6A24C',
                     border: '1px solid rgba(198,162,76,.5)', borderRadius: '999px', padding: '3px 9px',
                     display: 'inline-flex', alignItems: 'center',
                   }}>&#8635; replay</span>
@@ -340,13 +340,13 @@ function FaqMobile() {
 
       {/* quick-reply chips — every FAQ question */}
       <div style={{ borderTop: '1px solid rgba(237,228,211,.08)', background: 'rgba(237,228,211,.02)', padding: '12px 14px calc(env(safe-area-inset-bottom,0px) + 16px)', maxHeight: '38%', overflowY: 'auto' }}>
-        <p style={{ margin: '0 0 10px', fontFamily: "'Space Mono',monospace", fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#8f8578', textAlign: 'center' }}>Tap a question</p>
+        <p style={{ margin: '0 0 10px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#8f8578', textAlign: 'center' }}>Tap a question</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           {pairs.map((p, idx) => {
             const done = !!asked[idx];
             const wide = idx === pairs.length - 1 && pairs.length % 2 === 1;   // last odd tile spans the row
             return (
-              <button key={idx} type="button" className="tap" onClick={() => ask(idx)}
+              <button key={idx} type="button" className="tap btn-lift" onClick={() => ask(idx)}
                 style={{
                   gridColumn: wide ? '1 / -1' : 'auto',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',

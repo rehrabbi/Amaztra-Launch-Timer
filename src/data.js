@@ -23,11 +23,11 @@ export const DOSE = {
 export const DOSE_MAX = 200;
 
 export const FORMATS = {
-  coffee: { label: 'Coffee', word: 'cup.', serving: '1 sachet daily · instant coffee mix', obj: 'assets/img/pouch/1-front-cut.png' },
-  capsule: { label: 'Capsule', word: 'capsule.', serving: '1 capsule daily · higher potency', obj: 'assets/img/amaztra-box.png' },
+  coffee: { label: 'Coffee', word: 'cup.', serving: '1 sachet daily · instant coffee mix', obj: 'assets/img/pouch/1-front-cut.webp' },
+  capsule: { label: 'Capsule', word: 'capsule.', serving: '1 capsule daily · higher potency', obj: 'assets/img/amaztra-box.webp' },
 };
 
-export const POUCH = 'assets/img/pouch/1-front-cut.png';
+export const POUCH = 'assets/img/pouch/1-front-cut.webp';
 
 // Outbound links used by the final CTA.
 // TODO: replace SHOP_URL with the real AMAZTRA store URL.

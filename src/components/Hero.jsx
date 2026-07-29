@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { doorHandoff, isNavLocked, registerHeroReset } from '../nav.js';
+import { onImgError } from '../imgFallback.js';
 
 /**
  * Cinematic hero. The hero holds the top of the page and the first scroll is a
@@ -185,6 +186,9 @@ export default function Hero({ introDone }) {
       if (triggered || !armed) return;
       triggered = true;
       setWillChange(true);
+      // warm up the hero clip now so it is buffered by the time the scene finishes
+      const vw = videoRef.current;
+      if (vw) { vw.preload = 'auto'; try { vw.load(); } catch { /* ignore */ } }
       const DUR = 1900, t0 = performance.now();
       const step = (now) => {
         const t = Math.min(1, (now - t0) / DUR);
@@ -290,8 +294,8 @@ export default function Hero({ introDone }) {
       >
         {/* scroll-revealed lifestyle video — fades in as the masthead + pouch clear, then plays */}
         <div ref={videoWrapRef} aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0, pointerEvents: 'none' }}>
-          <video ref={videoRef} src="assets/video/ritual-hd.mp4" poster="assets/video/ritual-hd-poster.jpg"
-            muted playsInline preload="auto" tabIndex={-1}
+          <video ref={videoRef} src="assets/video/ritual-hd-opt.mp4" poster="assets/video/ritual-hd-poster.jpg"
+            muted playsInline preload="none" tabIndex={-1}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(18,15,13,.72) 0%,rgba(18,15,13,.34) 32%,rgba(18,15,13,.42) 72%,rgba(18,15,13,.8) 100%)' }} />
         </div>
@@ -348,10 +352,10 @@ export default function Hero({ introDone }) {
             <div className="spin-stack" style={{ position: 'relative', width: '100%', aspectRatio: '1.35 / 1' }}>
               <span aria-hidden="true" style={{ position: 'absolute', inset: '8% 6% 6%', borderRadius: '50%', background: 'radial-gradient(circle at 50% 48%, rgba(226,58,52,.4), rgba(193,26,34,.12) 46%, transparent 68%)', filter: 'blur(44px)', pointerEvents: 'none' }} />
               {/* box — behind, left; drifts on its own path */}
-              <img className="hp-float" src="assets/img/amaztra-box.png" alt="AMAZTRA box, glutathione and collagen food supplement" draggable={false}
+              <img className="hp-float" src="assets/img/amaztra-box.webp" onError={onImgError} decoding="async" alt="AMAZTRA box, glutathione and collagen food supplement" draggable={false}
                 style={{ position: 'absolute', left: '8%', bottom: 0, width: '42%', objectFit: 'contain', filter: 'drop-shadow(0 34px 52px rgba(0,0,0,.7))', userSelect: 'none', WebkitUserDrag: 'none', zIndex: 3, animation: 'am-float 8.5s ease-in-out infinite' }} />
               {/* pouch — in front, right; a slower, different drift so it never looks stuck to the box */}
-              <img className="hp-float" src="assets/img/pouch/clean-front.png" alt="AMAZTRA instant coffee pouch" draggable={false}
+              <img className="hp-float" src="assets/img/pouch/clean-front.webp" onError={onImgError} decoding="async" alt="AMAZTRA instant coffee pouch" draggable={false}
                 style={{ position: 'absolute', right: '2%', bottom: 0, width: '74%', objectFit: 'contain', filter: 'brightness(.9) drop-shadow(0 18px 40px rgba(0,0,0,.5))', userSelect: 'none', WebkitUserDrag: 'none', zIndex: 1, animation: 'am-float2 11s ease-in-out -2.5s infinite' }} />
             </div>
           </div>

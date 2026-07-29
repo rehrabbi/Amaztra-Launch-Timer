@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { LINKS } from '../data.js';
+import { onImgError } from '../imgFallback.js';
 
 const EASE = 'cubic-bezier(.23,1,.32,1)';
 const prefersReduce = () =>
@@ -97,11 +98,11 @@ function FinalCtaDesktop() {
         style={{ opacity: reduce ? 1 : 0, position: 'absolute',
           right: 'max(20px, calc((100vw - 1200px) / 2))', bottom: 0,
           height: 'clamp(440px,58vw,820px)', pointerEvents: 'none', zIndex: 2 }}>
-        <img ref={modelARef} src="assets/img/model-cut.png" alt="Woman enjoying an AMAZTRA coffee"
+        <img ref={modelARef} src="assets/img/model-cut.webp" onError={onImgError} loading="lazy" decoding="async" alt="Woman enjoying an AMAZTRA coffee"
           style={{ display: 'block', height: '100%', width: 'auto',
             filter: 'drop-shadow(0 26px 40px rgba(0,0,0,.6))',
             transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)' }} />
-        <img ref={modelBRef} src="assets/img/model-capsule.png" alt="Woman holding an AMAZTRA capsule box"
+        <img ref={modelBRef} src="assets/img/model-capsule.webp" onError={onImgError} loading="lazy" decoding="async" alt="Woman holding an AMAZTRA capsule box"
           style={{ position: 'absolute', right: '-21.7%', bottom: 0, display: 'block',
             height: '106.1%', width: 'auto', maxWidth: 'none', opacity: 0,
             filter: 'drop-shadow(0 26px 40px rgba(0,0,0,.6))',
@@ -122,20 +123,20 @@ function FinalCtaDesktop() {
           {/* pouch back-left, capsule box in front, blister across it, sachet over everything */}
           <div data-reveal data-reveal-delay=".22" style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(580px,100%)', height: 'clamp(240px,28vw,340px)', margin: 'clamp(8px,1.2vh,14px) 0' }}>
             <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(16px)', zIndex: 0 }} />
-            <img src="assets/img/pouch-new.png" alt="AMAZTRA coffee pouch"
+            <img src="assets/img/pouch-new.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA coffee pouch"
               style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', width: 'auto', zIndex: 1,
                 filter: 'drop-shadow(0 22px 30px rgba(0,0,0,.6))',
                 animation: reduce ? 'none' : 'cta2-bob 9s ease-in-out infinite' }} />
-            <img src="assets/img/capsule-blister.png" alt="AMAZTRA capsule blister pack"
+            <img src="assets/img/capsule-blister.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA capsule blister pack"
               style={{ position: 'absolute', left: '58%', bottom: '4%', height: '60%', width: 'auto', zIndex: 4,
                 transformOrigin: 'bottom center', transform: 'rotate(-11deg)',
                 filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.65))',
                 animation: reduce ? 'none' : 'cta2-sway-r 9s ease-in-out -2s infinite' }} />
-            <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box"
+            <img src="assets/img/amaztra-box.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA capsule box"
               style={{ position: 'absolute', left: '36%', bottom: '5%', height: '72%', width: 'auto', zIndex: 3,
                 filter: 'drop-shadow(0 22px 34px rgba(0,0,0,.7))',
                 animation: reduce ? 'none' : 'cta2-bob 10s ease-in-out -3s infinite' }} />
-            <img src="assets/img/sachet-new.png" alt="AMAZTRA instant coffee sachet"
+            <img src="assets/img/sachet-new.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA instant coffee sachet"
               style={{ position: 'absolute', left: '24%', bottom: '-1%', width: '42%', zIndex: 5,
                 transformOrigin: 'center', transform: 'rotate(-8deg)',
                 filter: 'drop-shadow(0 20px 26px rgba(0,0,0,.7))',
@@ -224,9 +225,9 @@ function FinalCtaMobile() {
       {DUST.map((d, i) => (
         <span key={i} aria-hidden="true" style={{ position: 'absolute', left: d.left, bottom: d.bottom, width: `${d.size}px`, height: `${d.size}px`, borderRadius: '50%', background: '#F6E39A', boxShadow: '0 0 6px rgba(246,227,154,.8)', '--dx': d.dx, animation: reduce ? 'none' : `cta-dust ${d.dur} ease-in-out ${d.delay} infinite`, pointerEvents: 'none', zIndex: 0 }} />
       ))}
-      <img ref={modelRef} src="assets/img/model-cut.png" alt="Woman enjoying an AMAZTRA coffee" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 0, height: '82%', width: 'auto', filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', clipPath: reduce ? 'none' : 'inset(0 0 100% 0)', transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)', pointerEvents: 'none' }} />
+      <img ref={modelRef} src="assets/img/model-cut.webp" onError={onImgError} loading="lazy" decoding="async" alt="Woman enjoying an AMAZTRA coffee" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 0, height: '82%', width: 'auto', filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', clipPath: reduce ? 'none' : 'inset(0 0 100% 0)', transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)', pointerEvents: 'none' }} />
       {/* capsule model, centred on its own subject (inset in a square frame), crossfading with the coffee model */}
-      <img ref={modelBRef} src="assets/img/model-capsule.png" alt="Woman holding an AMAZTRA capsule box" style={{ position: 'absolute', left: '50%', transform: 'translateX(-55.75%)', bottom: 0, height: '87%', width: 'auto', maxWidth: 'none', opacity: 0, filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)', pointerEvents: 'none' }} />
+      <img ref={modelBRef} src="assets/img/model-capsule.webp" onError={onImgError} loading="lazy" decoding="async" alt="Woman holding an AMAZTRA capsule box" style={{ position: 'absolute', left: '50%', transform: 'translateX(-55.75%)', bottom: 0, height: '87%', width: 'auto', maxWidth: 'none', opacity: 0, filter: 'drop-shadow(0 22px 40px rgba(0,0,0,.6))', transition: 'opacity 1.1s cubic-bezier(.23,1,.32,1)', pointerEvents: 'none' }} />
       <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '34%', background: 'linear-gradient(180deg,#141210 8%,rgba(20,15,13,.4) 60%,transparent)' }} />
       <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '54%', background: 'linear-gradient(180deg,transparent,rgba(20,15,13,.55) 46%,#141210)' }} />
 
@@ -241,10 +242,10 @@ function FinalCtaMobile() {
         {/* pouch back-left, capsule box in front, blister across it, sachet over everything */}
         <div data-r="0.55" style={{ opacity: reduce ? 1 : 0, position: 'relative', width: 'min(300px,74%)', height: '165px', margin: '0 0 26px' }}>
           <span aria-hidden="true" style={{ position: 'absolute', left: '42%', top: '52%', transform: 'translate(-50%,-50%)', width: '120%', height: '110%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(246,183,74,.16),rgba(226,58,52,.06) 46%,transparent 70%)', filter: 'blur(14px)', zIndex: 0 }} />
-          <img src="assets/img/pouch-new.png" alt="AMAZTRA coffee pouch" style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', width: 'auto', zIndex: 1, filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'fm-bob 9s ease-in-out infinite' }} />
-          <img src="assets/img/capsule-blister.png" alt="AMAZTRA capsule blister pack" style={{ position: 'absolute', left: '58%', bottom: '4%', height: '60%', width: 'auto', zIndex: 4, transformOrigin: 'bottom center', transform: 'rotate(-11deg)', filter: 'drop-shadow(0 14px 20px rgba(0,0,0,.65))', animation: reduce ? 'none' : 'fm-sway-r 9s ease-in-out -2s infinite' }} />
-          <img src="assets/img/amaztra-box.png" alt="AMAZTRA capsule box" style={{ position: 'absolute', left: '36%', bottom: '5%', height: '72%', width: 'auto', zIndex: 3, filter: 'drop-shadow(0 16px 24px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-bob 10s ease-in-out -3s infinite' }} />
-          <img src="assets/img/sachet-new.png" alt="AMAZTRA instant coffee sachet" style={{ position: 'absolute', left: '24%', bottom: '-1%', width: '42%', zIndex: 5, transformOrigin: 'center', transform: 'rotate(-8deg)', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
+          <img src="assets/img/pouch-new.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA coffee pouch" style={{ position: 'absolute', left: 0, bottom: 0, height: '100%', width: 'auto', zIndex: 1, filter: 'drop-shadow(0 18px 26px rgba(0,0,0,.6))', animation: reduce ? 'none' : 'fm-bob 9s ease-in-out infinite' }} />
+          <img src="assets/img/capsule-blister.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA capsule blister pack" style={{ position: 'absolute', left: '58%', bottom: '4%', height: '60%', width: 'auto', zIndex: 4, transformOrigin: 'bottom center', transform: 'rotate(-11deg)', filter: 'drop-shadow(0 14px 20px rgba(0,0,0,.65))', animation: reduce ? 'none' : 'fm-sway-r 9s ease-in-out -2s infinite' }} />
+          <img src="assets/img/amaztra-box.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA capsule box" style={{ position: 'absolute', left: '36%', bottom: '5%', height: '72%', width: 'auto', zIndex: 3, filter: 'drop-shadow(0 16px 24px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-bob 10s ease-in-out -3s infinite' }} />
+          <img src="assets/img/sachet-new.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA instant coffee sachet" style={{ position: 'absolute', left: '24%', bottom: '-1%', width: '42%', zIndex: 5, transformOrigin: 'center', transform: 'rotate(-8deg)', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
         </div>
 
         <a data-r="0.7" className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>

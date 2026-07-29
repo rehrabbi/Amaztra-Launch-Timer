@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNearViewport, usePauseOffscreen } from '../useLazyVideo.js';
 
 const prefersReduce = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -34,6 +35,9 @@ function RitualDesktop() {
   const ambientRef = useRef(null);
   const timers = useRef([]);
   const reduce = prefersReduce();
+  const vidRef = useRef(null);
+  const near = useNearViewport(rootRef);
+  usePauseOffscreen(rootRef, [vidRef], reduce);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -165,8 +169,8 @@ function RitualDesktop() {
           clipPath: reduce ? 'none' : 'inset(0 0 100% 0)',
         }}>
           <span aria-hidden="true" style={{ position: 'absolute', inset: '-14%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(226,58,52,.26), rgba(246,183,74,.1) 46%, transparent 70%)', filter: 'blur(34px)', pointerEvents: 'none', zIndex: 0 }} />
-          <video src="assets/video/ritual-new.mp4" poster="assets/video/ritual-new-poster.jpg"
-            autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true"
+          <video ref={vidRef} src={near ? 'assets/video/ritual-new-opt.mp4' : undefined} poster="assets/video/ritual-new-poster.jpg"
+            autoPlay={!reduce} loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true"
             style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <span aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,.4)', borderRadius: 'inherit' }} />        </div>
 
@@ -272,6 +276,9 @@ function RitualMobile() {
   const sipRef = useRef(null);
   const glowRef = useRef(null);
   const reduce = prefersReduce();
+  const vidRef = useRef(null);
+  const near = useNearViewport(rootRef);
+  usePauseOffscreen(rootRef, [vidRef], reduce);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -318,7 +325,7 @@ function RitualMobile() {
     <section id="ritual" ref={rootRef} className="fullpage" style={{ position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: '#141210', fontFamily: "'Space Grotesk',system-ui,sans-serif" }}>
       <style>{`@keyframes rm-dots{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}@keyframes rm-shimmer{0%{background-position:0 0}100%{background-position:200% 0}}`}</style>
       <div ref={mediaRef} aria-hidden="true" style={{ position: 'absolute', inset: 0, clipPath: reduce ? 'none' : 'inset(0 0 100% 0)' }}>
-        <video src="assets/video/ritual-new.mp4" poster="assets/video/ritual-new-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <video ref={vidRef} src={near ? 'assets/video/ritual-new-opt.mp4' : undefined} poster="assets/video/ritual-new-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       </div>
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(18,15,13,.6) 0%,rgba(18,15,13,.12) 30%,rgba(18,15,13,.55) 60%,rgba(18,15,13,.94) 100%)' }} />
 

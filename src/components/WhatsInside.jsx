@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { onImgError } from '../imgFallback.js';
 
 const prefersReduce = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -62,7 +63,7 @@ const LABELS = {
     unit: ['kcal', 'per', 'sachet'],
     macros: [['Fat', '2 g'], ['Carbs', '11 g'], ['Sugar', '0 g'], ['Protein', '3 g']],
     lede: 'Six actives, real coffee, and nothing to hide. Every ingredient and the full nutrition panel are printed right on the pack. Tap it to read the whole label.',
-    pack: 'assets/img/pouch/back-full.png',
+    pack: 'assets/img/pouch/back-full.webp',
     packAlt: 'Back of the AMAZTRA pouch showing ingredients and nutrition facts',
     // the pouch art carries its own transparent padding, so it is pulled up and left
     packBox: { width: 'min(400px,94vw)', marginTop: '0', marginLeft: '0', align: 'center', self: 'center' },
@@ -90,7 +91,7 @@ const LABELS = {
     unit: ['kcal', 'per', 'capsule'],
     macros: [['Fat', '0 g'], ['Carbs', '0 g'], ['Sugar', '0 g'], ['Protein', '0 g']],
     lede: 'The same six actives, no coffee and nothing else along for the ride: zero fat, zero carbs, zero sugar. One capsule a day, and the whole label is printed on the box.',
-    pack: 'assets/img/capsule-back.png',
+    pack: 'assets/img/capsule-back.webp',
     packAlt: 'Back of the AMAZTRA capsule box showing ingredients and nutrition facts',
     // the box shot is trimmed to its own edges, so it needs no negative offset
     packBox: { width: 'min(250px,80%)', marginTop: '0', marginLeft: '0', align: 'center', self: 'center' },
@@ -221,7 +222,7 @@ function LabelModal({ open, onClose, reduce, fmt, onFmt }) {
                 <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '13px', letterSpacing: '.02em', color: '#221a12', textTransform: 'uppercase' }}>{blk.h}</div>
                 {blk.h === 'Manufactured for' ? (
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginTop: '8px' }}>
-                    <img src="assets/img/apc-logo.png" alt="Amazing Pharma Corporation logo" style={{ width: '52px', height: '52px', flexShrink: 0, objectFit: 'contain' }} />
+                    <img src="assets/img/apc-logo.webp" onError={onImgError} loading="lazy" decoding="async" alt="Amazing Pharma Corporation logo" style={{ width: '52px', height: '52px', flexShrink: 0, objectFit: 'contain' }} />
                     <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.55, color: '#4a3c28' }}>{blk.b}</p>
                   </div>
                 ) : (
@@ -497,7 +498,7 @@ function WhatsInsideDesktop() {
             style={{ position: 'relative', border: 0, background: 'none', padding: 0, cursor: 'pointer',
               transition: 'transform .3s ease', transformStyle: 'preserve-3d', display: 'block', width: L.packBox.width }}>
             <span aria-hidden="true" style={{ position: 'absolute', left: '50%', top: '54%', width: '86%', height: '70%', transform: 'translate(-50%,-50%)', borderRadius: '50%', background: 'radial-gradient(circle, rgba(193,26,34,.32), transparent 66%)', filter: 'blur(30px)', zIndex: 0 }} />
-            <img ref={packRef} src={L.pack} alt={L.packAlt} style={{ position: 'relative', zIndex: 1, width: '100%', display: 'block', filter: 'none', animation: reduce ? 'none' : 'am-float 9s ease-in-out infinite' }} />
+            <img ref={packRef} src={L.pack} onError={onImgError} loading="lazy" decoding="async" alt={L.packAlt} style={{ position: 'relative', zIndex: 1, width: '100%', display: 'block', filter: 'none', animation: reduce ? 'none' : 'am-float 9s ease-in-out infinite' }} />
             <span aria-hidden="true" style={{
               position: 'absolute', zIndex: 2, right: '50%', bottom: '8%', transform: 'translateX(50%)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
@@ -625,7 +626,7 @@ function WhatsInsideMobile() {
       <div data-r style={{ opacity: reduce ? 1 : 0, position: 'relative', flex: '1 1 0', height: 0, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '2px 0' }}>
         <button type="button" onClick={() => setOpen(true)} aria-label="Open the AMAZTRA nutrition facts and label" style={{ position: 'relative', border: 0, background: 'none', padding: 0, cursor: 'pointer', width: 'auto', maxWidth: '92%', alignSelf: 'stretch' }}>
           <span aria-hidden="true" style={{ position: 'absolute', left: '50%', top: '54%', width: '86%', height: '70%', transform: 'translate(-50%,-50%)', borderRadius: '50%', background: 'radial-gradient(circle,rgba(193,26,34,.3),transparent 66%)', filter: 'blur(26px)', zIndex: 0 }} />
-          <img ref={packRef} src={L.pack} alt={L.packAlt} style={{ position: 'relative', zIndex: 1, height: '100%', width: 'auto', maxWidth: '100%', display: 'block', animation: reduce ? 'none' : 'am-float 9s ease-in-out infinite' }} />
+          <img ref={packRef} src={L.pack} onError={onImgError} loading="lazy" decoding="async" alt={L.packAlt} style={{ position: 'relative', zIndex: 1, height: '100%', width: 'auto', maxWidth: '100%', display: 'block', animation: reduce ? 'none' : 'am-float 9s ease-in-out infinite' }} />
           <span aria-hidden="true" style={{ position: 'absolute', zIndex: 2, left: '50%', top: '52%', transform: 'translate(-50%,-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <span style={{ position: 'relative', width: '52px', height: '52px', borderRadius: '50%', background: 'radial-gradient(circle at 38% 32%, rgba(52,40,30,.9), rgba(23,17,14,.82))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(23,17,14,.4)', animation: reduce ? 'none' : 'tz-press 2.6s ease-in-out infinite' }}>
               {reduce ? null : <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(23,17,14,.4)', animation: 'tz-ring 2.2s ease-out infinite' }} />}

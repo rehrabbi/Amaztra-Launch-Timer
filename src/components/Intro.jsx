@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { onImgError } from '../imgFallback.js';
 
 const MOBILE_Q = '(max-width: 760px)';
 
@@ -174,7 +175,7 @@ export default function Intro({ onExit }) {
 
       {/* logo + title BEHIND the screen (out of flow, lower z for depth) */}
       <div ref={titleRef} style={{ position: 'absolute', top: isMobile ? 'calc(env(safe-area-inset-top,0px) + 54px)' : 'clamp(14px,4vh,48px)', left: 0, right: 0, zIndex: 0, textAlign: 'center', opacity: 0, willChange: 'transform,opacity', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <img src="assets/img/pouch/apc-logo.png" alt="Amazing Pharma Corporation logo"
+        <img src="assets/img/pouch/apc-logo.webp" onError={onImgError} decoding="async" alt="Amazing Pharma Corporation logo"
           style={{ width: isMobile ? 'clamp(40px,12vw,54px)' : 'clamp(52px,7vw,88px)', maxHeight: '11vh', objectFit: 'contain', filter: 'drop-shadow(0 8px 18px rgba(0,0,0,.5))' }} />
         <div style={{
           marginTop: 'clamp(8px,1.4vh,14px)', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(9px,1vw,12px)',
@@ -214,9 +215,9 @@ export default function Intro({ onExit }) {
               {/* box + pouch duo, matching the hero */}
               <div style={{ position: 'relative', width: '82%', aspectRatio: '1.35 / 1', marginTop: 'clamp(2px,1vh,8px)' }}>
                 <span aria-hidden="true" style={{ position: 'absolute', inset: '8% 6% 6%', borderRadius: '50%', background: 'radial-gradient(circle at 50% 48%, rgba(226,58,52,.4), rgba(193,26,34,.12) 46%, transparent 68%)', filter: 'blur(18px)', pointerEvents: 'none' }} />
-                <img src="assets/img/pouch/clean-front.png" alt="" aria-hidden="true"
+                <img src="assets/img/pouch/clean-front.webp" onError={onImgError} decoding="async" alt="" aria-hidden="true"
                   style={{ position: 'absolute', right: '2%', bottom: 0, width: '74%', objectFit: 'contain', filter: 'brightness(.9) drop-shadow(0 12px 18px rgba(0,0,0,.6))', zIndex: 1 }} />
-                <img src="assets/img/amaztra-box.png" alt="" aria-hidden="true"
+                <img src="assets/img/amaztra-box.webp" onError={onImgError} decoding="async" alt="" aria-hidden="true"
                   style={{ position: 'absolute', left: '8%', bottom: 0, width: '42%', objectFit: 'contain', filter: 'drop-shadow(0 12px 18px rgba(0,0,0,.55))', zIndex: 3 }} />
               </div>
             </div>
@@ -240,9 +241,9 @@ export default function Intro({ onExit }) {
               {/* box + pouch duo, matching the hero */}
               <div style={{ position: 'absolute', right: '2%', top: '54%', transform: 'translateY(-50%)', width: '42%', aspectRatio: '1.35 / 1' }}>
                 <span aria-hidden="true" style={{ position: 'absolute', inset: '8% 6% 6%', borderRadius: '50%', background: 'radial-gradient(circle at 50% 48%, rgba(226,58,52,.4), rgba(193,26,34,.12) 46%, transparent 68%)', filter: 'blur(22px)', pointerEvents: 'none' }} />
-                <img src="assets/img/pouch/clean-front.png" alt="" aria-hidden="true"
+                <img src="assets/img/pouch/clean-front.webp" onError={onImgError} decoding="async" alt="" aria-hidden="true"
                   style={{ position: 'absolute', right: '2%', bottom: 0, width: '74%', objectFit: 'contain', filter: 'brightness(.9) drop-shadow(0 14px 22px rgba(0,0,0,.6))', zIndex: 1 }} />
-                <img src="assets/img/amaztra-box.png" alt="" aria-hidden="true"
+                <img src="assets/img/amaztra-box.webp" onError={onImgError} decoding="async" alt="" aria-hidden="true"
                   style={{ position: 'absolute', left: '8%', bottom: 0, width: '42%', objectFit: 'contain', filter: 'drop-shadow(0 14px 22px rgba(0,0,0,.55))', zIndex: 3 }} />
               </div>
             </>

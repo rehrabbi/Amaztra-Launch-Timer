@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNearViewport, usePauseOffscreen } from '../useLazyVideo.js';
 
 const EASE = 'cubic-bezier(.16,1,.3,1)';
 
@@ -44,6 +45,9 @@ function BenefitsDesktop() {
   const dotRefs = [useRef(null), useRef(null), useRef(null)];
   const reduce = prefersReduce();
   const [live, setLive] = useState(false);
+  const vidRef = useRef(null);
+  const near = useNearViewport(sectionRef);
+  usePauseOffscreen(sectionRef, [vidRef], reduce);
 
   // The whole timeline card plays as ONE deterministic entrance the moment the
   // section scrolls into view (rAF poll — reliable under the hero scroll setup):
@@ -170,8 +174,8 @@ function BenefitsDesktop() {
           background: '#141210', borderRadius: '16px', overflow: 'hidden',
           boxShadow: '0 30px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(246,227,154,.35)',
         }}>
-          <video src="assets/video/glow-scene.mp4" poster="assets/video/glow-scene-poster.jpg"
-            autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true"
+          <video ref={vidRef} src={near ? 'assets/video/glow-scene-opt.mp4' : undefined} poster="assets/video/glow-scene-poster.jpg"
+            autoPlay={!reduce} loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true"
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', zIndex: 0 }} />
           {/* dark wash — clear at the top so the clip reads, solid at the foot to seat the text (matches the mobile poster, no red) */}
           <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '30%', zIndex: 1, pointerEvents: 'none', background: 'linear-gradient(180deg,rgba(20,15,13,.72),transparent)' }} />
@@ -274,6 +278,9 @@ function BenefitsMobile() {
   const d0 = useRef(null), d1 = useRef(null), d2 = useRef(null);
   const labelRefs = [useRef(null), useRef(null), useRef(null)];
   const reduce = prefersReduce();
+  const vidRef = useRef(null);
+  const near = useNearViewport(rootRef);
+  usePauseOffscreen(rootRef, [vidRef], reduce);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -340,7 +347,7 @@ function BenefitsMobile() {
     <section id="benefits" ref={rootRef} className="fullpage" style={{ position: 'relative', minHeight: '100dvh', background: 'radial-gradient(120% 100% at 50% 8%,#1c1512,#141210 60%)', overflow: 'hidden', padding: 'clamp(48px,8vh,80px) clamp(22px,6vw,28px) clamp(40px,6vh,60px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '18px', fontFamily: "'Space Grotesk',system-ui,sans-serif" }}>
       {/* poster slot — payoff eyebrow at top, glow scene, no red bleed */}
       <div ref={posterRef} style={{ position: 'relative', width: '100%', aspectRatio: '5/4', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 26px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(246,227,154,.25)', clipPath: reduce ? 'none' : 'inset(0 0 100% 0)' }}>
-        <video src="assets/video/glow-scene.mp4" poster="assets/video/glow-scene-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <video ref={vidRef} src={near ? 'assets/video/glow-scene-opt.mp4' : undefined} poster="assets/video/glow-scene-poster.jpg" autoPlay={!reduce} loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '30%', background: 'linear-gradient(180deg,rgba(20,15,13,.72),transparent)' }} />
         <span aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '62%', background: 'linear-gradient(180deg,transparent,rgba(20,15,13,.55) 45%,rgba(20,15,13,.9))' }} />
         <p ref={eyebrowRef} style={{ position: 'absolute', top: '18px', left: '20px', margin: 0, opacity: reduce ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, fontSize: '12px', letterSpacing: '.14em', textTransform: 'uppercase', color: '#F6E39A' }}>The payoff</p>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ING, ANGLES, POUCH, DOSE, DOSE_MAX, FORMATS } from '../data.js';
+import { onImgError } from '../imgFallback.js';
 
 const R = 42; // desktop orbit radius, percent
 const FMTS = ['coffee', 'capsule'];
@@ -519,8 +520,8 @@ function IngredientsDesktop() {
 
           {/* center pouch */}
           <div ref={pouchRef} style={{ position: 'absolute', left: '50%', top: '50%', width: '30%', transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 2 }}>
-            <img src={POUCH} alt="AMAZTRA pouch" style={{ display: 'block', width: '100%', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))', opacity: fmt === 'coffee' ? 1 : 0, transition: 'opacity .42s ease' }} />
-            <img src={FORMATS.capsule.obj} alt="AMAZTRA capsule box" style={{ position: 'absolute', left: 0, top: '50%', width: '100%', transform: 'translateY(-50%)', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))', opacity: fmt === 'capsule' ? 1 : 0, transition: 'opacity .42s ease' }} />
+            <img src={POUCH} onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA pouch" style={{ display: 'block', width: '100%', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))', opacity: fmt === 'coffee' ? 1 : 0, transition: 'opacity .42s ease' }} />
+            <img src={FORMATS.capsule.obj} onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA capsule box" style={{ position: 'absolute', left: 0, top: '50%', width: '100%', transform: 'translateY(-50%)', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.6))', opacity: fmt === 'capsule' ? 1 : 0, transition: 'opacity .42s ease' }} />
           </div>
 
           {/* ingredient nodes */}
@@ -706,7 +707,7 @@ function IngredientsMobile() {
         <span aria-hidden="true" style={{ position: 'absolute', width: '82%', aspectRatio: '1', borderRadius: '50%', background: 'radial-gradient(circle,rgba(198,162,76,.4),rgba(201,154,52,.14) 50%,transparent 72%)', filter: 'blur(20px)', animation: reduce ? 'none' : 'glow-pulse 6s ease-in-out infinite' }} />
         <span aria-hidden="true" style={{ position: 'absolute', width: '90%', aspectRatio: '1', border: '1px solid rgba(23,17,14,.28)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 30s linear infinite' }} />
         <span aria-hidden="true" style={{ position: 'absolute', width: '66%', aspectRatio: '1', border: '1px dashed rgba(23,17,14,.2)', borderRadius: '50%', animation: reduce ? 'none' : 'halo-spin 22s linear infinite reverse' }} />
-        <img key={fmt} src={FORMATS[fmt].obj} alt={fmt === 'capsule' ? 'AMAZTRA capsule box' : 'AMAZTRA pouch'} style={{ position: 'relative', width: '58%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.45))', animation: reduce ? 'none' : 'ing-float 6s ease-in-out infinite', pointerEvents: 'none' }} />
+        <img key={fmt} src={FORMATS[fmt].obj} onError={onImgError} loading="lazy" decoding="async" alt={fmt === 'capsule' ? 'AMAZTRA capsule box' : 'AMAZTRA pouch'} style={{ position: 'relative', width: '58%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 18px 30px rgba(0,0,0,.45))', animation: reduce ? 'none' : 'ing-float 6s ease-in-out infinite', pointerEvents: 'none' }} />
         <span key={active} style={{
           position: 'absolute', top: '2%', left: '50%', transform: 'translateX(-50%)',
           width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(23,17,14,.9)',

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { onImgError } from '../imgFallback.js';
 
 const prefersReduce = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -88,7 +89,8 @@ function Panel({ kind, panelRef, reduce, clip }) {
               : 'radial-gradient(circle, rgba(246,183,74,.30), transparent 68%)',
           }} />
           <img
-            src={isCoffee ? 'assets/img/pouch/clean-front.png' : 'assets/img/amaztra-box.png'}
+            src={isCoffee ? 'assets/img/pouch/clean-front.webp' : 'assets/img/amaztra-box.webp'}
+            onError={onImgError} loading="lazy" decoding="async"
             alt={isCoffee ? 'AMAZTRA instant coffee pouch' : 'AMAZTRA capsule box'}
             style={{
               position: 'relative', maxHeight: 'min(220px,30vh)', width: 'auto',
@@ -322,7 +324,8 @@ function MobileCard({ kind, cardRef, reduce, clip }) {
           background: isCoffee ? 'radial-gradient(circle, rgba(226,58,52,.30), transparent 68%)' : 'radial-gradient(circle, rgba(246,183,74,.30), transparent 68%)',
         }} />
         <img
-          src={isCoffee ? 'assets/img/pouch/clean-front.png' : 'assets/img/amaztra-box.png'}
+          src={isCoffee ? 'assets/img/pouch/clean-front.webp' : 'assets/img/amaztra-box.webp'}
+          onError={onImgError} loading="lazy" decoding="async"
           alt={isCoffee ? 'AMAZTRA instant coffee pouch' : 'AMAZTRA capsule box'}
           style={{ position: 'relative', maxHeight: '128px', width: 'auto', filter: 'drop-shadow(0 12px 20px rgba(0,0,0,.6))' }} />
       </div>

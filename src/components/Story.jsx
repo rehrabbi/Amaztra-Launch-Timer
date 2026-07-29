@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNearViewport, usePauseOffscreen } from '../useLazyVideo.js';
 
 const EASE = 'cubic-bezier(.16,1,.3,1)';
 const prefersReduce = () =>
@@ -15,7 +16,7 @@ const STORY = {
     strikeWord: 'work',
     punch: 'it should brew.',
     desc: 'Self-care quietly became a chore. But you never skipped the first warm cup, so we folded the actives right into it.',
-    video: 'assets/video/origin-coffee.mp4',
+    video: 'assets/video/origin-coffee-opt.mp4',
     poster: 'assets/video/origin-coffee-poster.jpg',
     objPos: '50% 22%',
   },
@@ -25,7 +26,7 @@ const STORY = {
     strikeWord: 'complicated',
     punch: 'it should come in a capsule.',
     desc: '',                   // capsule closes on the payoff line, no body copy
-    video: 'assets/video/origin.mp4',
+    video: 'assets/video/origin-opt.mp4',
     poster: 'assets/video/origin-poster.jpg',
     objPos: '50% 26%',
   },
@@ -82,6 +83,8 @@ function StoryDesktop() {
   const prevFmt = useRef('coffee');
   const [fmt, setFmt] = useState('coffee');
   const cfg = STORY[fmt];
+  const near = useNearViewport(rootRef);
+  usePauseOffscreen(rootRef, [coffeeVidRef, capsuleVidRef], prefersReduce());
 
   // Toggle transition: cross-dissolve the two video layers with a directional
   // clip-wipe, run a coloured light sweep across the frame (warm toward coffee,
@@ -283,8 +286,8 @@ function StoryDesktop() {
         <div className="story-media-wrap" style={{ position: 'relative', zIndex: 1, minWidth: 0, height: 'clamp(380px,58vh,520px)', marginLeft: 'clamp(-96px,-6vw,-64px)' }}>
           <span aria-hidden="true" style={{ position: 'absolute', inset: '-12%', borderRadius: '50%', background: 'radial-gradient(circle,rgba(226,58,52,.3),rgba(246,183,74,.12) 46%,transparent 70%)', filter: 'blur(34px)', pointerEvents: 'none', animation: 'glow-pulse 6s ease-in-out infinite' }} />
           <div data-media className="story-media" style={{ position: 'relative', height: '100%', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(246,227,154,.22)', boxShadow: '0 34px 70px rgba(0,0,0,.55)', background: 'linear-gradient(160deg,#2a1c15,#171310)', clipPath: 'inset(0 0 100% 0)' }}>
-            <video ref={coffeeVidRef} src={STORY.coffee.video} poster={STORY.coffee.poster} autoPlay loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.coffee.objPos, display: 'block', zIndex: 1 }} />
-            <video ref={capsuleVidRef} src={STORY.capsule.video} poster={STORY.capsule.poster} autoPlay loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.capsule.objPos, display: 'block', opacity: 0, zIndex: 1 }} />
+            <video ref={coffeeVidRef} src={near ? STORY.coffee.video : undefined} poster={STORY.coffee.poster} autoPlay loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.coffee.objPos, display: 'block', zIndex: 1 }} />
+            <video ref={capsuleVidRef} src={near ? STORY.capsule.video : undefined} poster={STORY.capsule.poster} autoPlay loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.capsule.objPos, display: 'block', opacity: 0, zIndex: 1 }} />
             <span ref={sweepRef} aria-hidden="true" style={{ position: 'absolute', top: '-10%', bottom: '-10%', left: 0, width: '60%', opacity: 0, pointerEvents: 'none', mixBlendMode: 'screen', filter: 'blur(6px)', zIndex: 2 }} />
             <span aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,.35)', borderRadius: 'inherit', zIndex: 3 }} />          </div>
         </div>
@@ -322,6 +325,8 @@ function StoryMobile() {
   const [fmt, setFmt] = useState('coffee');
   const cfg = STORY[fmt];
   const reduce = prefersReduce();
+  const near = useNearViewport(rootRef);
+  usePauseOffscreen(rootRef, [coffeeVidRef, capsuleVidRef], reduce);
 
   // Toggle transition: cross-dissolve the two full-bleed clips with a directional
   // clip-wipe and re-enter the payoff line and copy. Prev-value guard keeps
@@ -388,8 +393,8 @@ function StoryMobile() {
     <section id="story" ref={rootRef} className="fullpage" style={{ position: 'relative', minHeight: '100dvh', overflow: 'hidden', background: '#141210', fontFamily: "'Space Grotesk',system-ui,sans-serif" }}>
       <style>{`@keyframes st-ken{from{transform:scale(1.03) translateY(0)}to{transform:scale(1.18) translateY(-16px)}}`}</style>
       <div aria-hidden="true" style={{ position: 'absolute', inset: 0, animation: reduce ? 'none' : 'st-ken 16s ease-in-out infinite alternate' }}>
-        <video ref={coffeeVidRef} src={STORY.coffee.video} poster={STORY.coffee.poster} autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.coffee.objPos, display: 'block' }} />
-        <video ref={capsuleVidRef} src={STORY.capsule.video} poster={STORY.capsule.poster} autoPlay={!reduce} loop muted playsInline preload="metadata" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.capsule.objPos, display: 'block', opacity: 0 }} />
+        <video ref={coffeeVidRef} src={near ? STORY.coffee.video : undefined} poster={STORY.coffee.poster} autoPlay={!reduce} loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.coffee.objPos, display: 'block' }} />
+        <video ref={capsuleVidRef} src={near ? STORY.capsule.video : undefined} poster={STORY.capsule.poster} autoPlay={!reduce} loop muted playsInline preload="none" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: STORY.capsule.objPos, display: 'block', opacity: 0 }} />
       </div>
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(18,15,13,.5) 0%,rgba(18,15,13,0) 26%,rgba(18,15,13,.5) 58%,rgba(18,15,13,.94) 100%)' }} />
       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '0 clamp(24px,7vw,34px) clamp(48px,8vh,72px)', display: 'flex', flexDirection: 'column', gap: '12px' }}>

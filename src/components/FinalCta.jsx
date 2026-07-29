@@ -144,8 +144,7 @@ function FinalCtaDesktop() {
           </div>
 
           <a data-reveal data-reveal-delay=".3" href={LINKS.shop} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 32px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(15px,1.6vw,17px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-            Shop coffee {'&'} capsules
-            <span aria-hidden="true" className="cta-arrow" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
+            Shop Coffee {'&'} Capsules
             <span aria-hidden="true" data-anim style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'cta-bshine 5s ease-in-out infinite' }} />
           </a>
         </div>
@@ -249,7 +248,7 @@ function FinalCtaMobile() {
         </div>
 
         <a data-r="0.7" className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-          Shop coffee {'&'} capsules<span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
+          Shop Coffee {'&'} Capsules
           <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'fm-btnshine 5s ease-in-out 1.6s infinite' }} />
         </a>
       </div>

@@ -162,12 +162,32 @@ export function initNavigator() {
   // The hero keeps its own scroll-lock (managed inside Hero.jsx). Below it, one wheel
   // notch or arrow press moves exactly one section, eased. Tall sections scroll through
   // natively first (canNative) before the takeover advances to the next section.
+  // true when the wheel is over an inner scrollable element (e.g. the FAQ chat
+  // thread) that can still move in this direction, so the takeover lets it scroll
+  // instead of snapping to the next section.
+  const scrollableUnder = (node, dir) => {
+    let el = node instanceof Element ? node : null;
+    while (el && el !== document.body) {
+      if (el.scrollHeight - el.clientHeight > 1) {
+        const oy = getComputedStyle(el).overflowY;
+        if (oy === 'auto' || oy === 'scroll') {
+          const atTop = el.scrollTop <= 0;
+          const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+          if (dir > 0 ? !atBottom : !atTop) return true;
+        }
+      }
+      el = el.parentElement;
+    }
+    return false;
+  };
+
   const onWheel = (e) => {
     if (state.lock || modalOpen() || inHero()) return;
     if (state.animating) { e.preventDefault(); return; }
     if (performance.now() < cool) { e.preventDefault(); return; }
     if (Math.abs(e.deltaY) < 4) return;
     const dir = e.deltaY > 0 ? 1 : -1;
+    if (scrollableUnder(e.target, dir)) return;   // an inner scroll area takes the wheel first
     const targets = getTargets();
     if (canNative(dir, targets, nearestIndex(targets))) return;   // let tall sections scroll through first
     e.preventDefault();
@@ -176,8 +196,12 @@ export function initNavigator() {
 
   const onKey = (e) => {
     if (state.lock || modalOpen() || inHero() || state.animating) return;
-    if (['ArrowDown', 'PageDown', ' ', 'Spacebar'].includes(e.key)) { e.preventDefault(); move(1); }
-    else if (['ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); move(-1); }
+    const down = ['ArrowDown', 'PageDown', ' ', 'Spacebar'].includes(e.key);
+    const up = ['ArrowUp', 'PageUp'].includes(e.key);
+    if (!down && !up) return;
+    if (scrollableUnder(document.activeElement, down ? 1 : -1)) return;   // a focused inner scroll area keeps the keys
+    e.preventDefault();
+    move(down ? 1 : -1);
   };
 
   const onAnchor = (e) => {

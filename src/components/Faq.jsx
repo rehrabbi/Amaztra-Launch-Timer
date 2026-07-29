@@ -184,11 +184,7 @@ function FaqDesktop() {
           border: '1px solid rgba(237,228,211,.14)', borderRadius: '44px', padding: '12px',
           boxShadow: '0 24px 60px rgba(0,0,0,.6)',
         }}>
-          <div
-            onMouseEnter={() => { if (threadRef.current) threadRef.current.style.overflowY = 'auto'; }}
-            onMouseLeave={() => { if (threadRef.current) threadRef.current.style.overflowY = 'hidden'; }}
-            style={{ background: '#141210', borderRadius: '34px', overflow: 'hidden' }}
-          >
+          <div style={{ background: '#141210', borderRadius: '34px', overflow: 'hidden' }}>
             {/* header */}
             <div style={{
               padding: '14px 20px 12px', textAlign: 'center',
@@ -223,17 +219,16 @@ function FaqDesktop() {
               <p style={{ margin: '6px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 700, fontSize: '15px', color: '#EDE4D3' }}>AMAZTRA</p>
             </div>
 
-            {/* thread (populated by playChat). Scrollable on hover, keyboard focus, or touch (see index.css). */}
+            {/* thread (populated by playChat). Always scrollable; the section navigator
+                yields the wheel to it via scrollableUnder in nav.js, snapping only at its ends. */}
             <div
               ref={threadRef}
               id="wc-thread"
               tabIndex={0}
               role="log"
               aria-label="AMAZTRA conversation, scrollable"
-              onFocus={() => { if (threadRef.current) threadRef.current.style.overflowY = 'auto'; }}
-              onBlur={() => { if (threadRef.current) threadRef.current.style.overflowY = 'hidden'; }}
               style={{
-                height: '560px', overflowY: 'hidden', overflowX: 'hidden', padding: '18px 16px 8px',
+                height: '560px', overflowY: 'auto', overflowX: 'hidden', padding: '18px 16px 8px',
                 display: 'flex', flexDirection: 'column', gap: '9px',
               }}
             />

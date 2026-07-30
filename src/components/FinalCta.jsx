@@ -143,11 +143,13 @@ function FinalCtaDesktop() {
                 animation: reduce ? 'none' : 'cta2-sway 8s ease-in-out infinite' }} />
           </div>
 
-          <a data-reveal data-reveal-delay=".3" href={LINKS.shop} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 32px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(15px,1.6vw,17px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-            Shop Coffee {'&'} Capsules
-            <span aria-hidden="true" data-anim style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'cta-bshine 5s ease-in-out infinite' }} />
-          </a>
-          <span data-reveal data-reveal-delay=".38" style={{ display: 'block', opacity: reduce ? 1 : 0, marginTop: '14px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12.5px', letterSpacing: '.03em', color: '#C6A24C' }}>Click Here to Order</span>
+          <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
+            <a data-reveal data-reveal-delay=".3" href={LINKS.shop} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px 32px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(15px,1.6vw,17px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
+              Shop Coffee {'&'} Capsules
+              <span aria-hidden="true" data-anim style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'cta-bshine 5s ease-in-out infinite' }} />
+            </a>
+            <span data-reveal data-reveal-delay=".38" style={{ opacity: reduce ? 1 : 0, marginTop: '14px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12.5px', letterSpacing: '.03em', color: '#C6A24C' }}>Click Here to Order</span>
+          </div>
         </div>
       </div>
     </section>
@@ -248,11 +250,13 @@ function FinalCtaMobile() {
           <img src="assets/img/sachet-new.webp" onError={onImgError} loading="lazy" decoding="async" alt="AMAZTRA instant coffee sachet" style={{ position: 'absolute', left: '24%', bottom: '-1%', width: '42%', zIndex: 5, transformOrigin: 'center', transform: 'rotate(-8deg)', filter: 'drop-shadow(0 16px 22px rgba(0,0,0,.7))', animation: reduce ? 'none' : 'fm-sway 8s ease-in-out infinite' }} />
         </div>
 
-        <a data-r="0.7" className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-          Shop Coffee {'&'} Capsules
-          <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'fm-btnshine 5s ease-in-out 1.6s infinite' }} />
-        </a>
-        <span data-r="0.82" style={{ opacity: reduce ? 1 : 0, marginTop: '12px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12.5px', letterSpacing: '.03em', color: '#C6A24C' }}>Click Here to Order</span>
+        <div style={{ alignSelf: 'flex-start', display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
+          <a data-r="0.7" className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ opacity: reduce ? 1 : 0, position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '16px', color: '#F6E39A', background: 'rgba(11,9,8,.6)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
+            Shop Coffee {'&'} Capsules
+            <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'fm-btnshine 5s ease-in-out 1.6s infinite' }} />
+          </a>
+          <span data-r="0.82" style={{ opacity: reduce ? 1 : 0, marginTop: '12px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12.5px', letterSpacing: '.03em', color: '#C6A24C' }}>Click Here to Order</span>
+        </div>
       </div>
     </section>
   );

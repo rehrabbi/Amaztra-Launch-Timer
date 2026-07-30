@@ -19,11 +19,16 @@
 const state = {
   lock: false,        // a covered handoff owns the screen; everything else stands down
   heroReset: null,    // re-arms the hero when the doors close on the way back up
+  heroDone: false,    // set once the hero scene has played; after this the hero is a plain top section
   animating: false,
 };
 
 export const isNavLocked = () => state.lock;
 export const registerHeroReset = (fn) => { state.heroReset = fn; };
+// The hero calls this once its scene has played through. From then on the hero is
+// just the top section: scrolling up reveals it at rest and scrolling down returns
+// to Story, with no scene or clip replay.
+export const markHeroDone = () => { state.heroDone = true; };
 
 const EASE_OUT = 'cubic-bezier(.16,1,.3,1)';
 const EASE_IN = 'cubic-bezier(.5,0,.2,1)';
@@ -113,9 +118,10 @@ export function initNavigator() {
     const m = document.getElementById('label-modal');
     return !!m && m.style.display === 'flex';
   };
-  // the hero owns its own beat until it hands off
+  // the hero owns its own beat until it hands off; once the scene has played the
+  // navigator takes the hero over like any other section (heroDone gate)
   const inHero = () => {
-    if (!heroPin) return false;
+    if (state.heroDone || !heroPin) return false;
     return heroPin.getBoundingClientRect().bottom > window.innerHeight * 0.92;
   };
   const nearestIndex = (targets) => {
@@ -143,9 +149,11 @@ export function initNavigator() {
     if (!targets.length) return;
     const idx = nearestIndex(targets);
     const ni = idx + dir;
-    // back up out of Story: the doors close, the hero re-arms behind them
-    if (dir < 0 && ni < 0 && targets[idx] && targets[idx].id === 'story') {
-      doorHandoff(0, () => { if (state.heroReset) state.heroReset(); });
+    // Once the hero has played, treat it as a plain top section. Scrolling down
+    // while still above the first section glides into Story (no scene, no clip);
+    // scrolling up past Story reveals the hero at rest.
+    if (dir > 0 && state.heroDone && window.scrollY < yOf(targets[0]) - 4) {
+      glide(yOf(targets[0]), 760);
       return;
     }
     if (ni < 0) { glide(0, 900); return; }

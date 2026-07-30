@@ -42,17 +42,19 @@ export default function Intro({ onExit }) {
     const lerp = (a, b, t) => a + (b - a) * t;
     const ease = (t) => 1 - Math.pow(1 - t, 3);
 
-    let prog = 0;          // 0 = tilted back, 1 = flat
-    let target = 0;
+    let prog = 0;          // 0 = tilted back, 1 = flat + zoomed
     let entered = reduce ? 1 : 0;
     let ready = false;
     let exiting = false;
-    let locked = false;
+    let started = false;   // one scroll / swipe / tap plays the whole intro, eased
+    let startT = 0;
     let raf = 0;
+    const RUN = 2000;      // full flatten -> zoom -> hand-off; long enough to read
+    const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
     const clamp01 = (t) => Math.max(0, Math.min(1, t));
     const apply = () => {
-      const p = ease(prog);
+      const p = prog;
       const pFlat = clamp01(p / 0.5);            // phase 1: tilt -> flat
       const pZoom = ease(clamp01((p - 0.42) / 0.58)); // phase 2: zoom into the screen
       const rot = lerp(24, 0, pFlat);
@@ -74,26 +76,26 @@ export default function Intro({ onExit }) {
 
     const tick = () => {
       if (entered < 1) entered = Math.min(1, entered + 0.045);
-      // once the tablet has flattened (user scrolled to this point), auto-drive the rest
-      if (ready && ease(prog) >= 0.5 && target < 1) { target = 1; locked = true; }
-      // once locked, drive to the hand-off fast so the intro->hero transition is near-seamless
-      prog += (target - prog) * (locked ? 0.2 : 0.06);
-      if (Math.abs(target - prog) < 0.001) prog = target;
+      // one scroll starts a single eased run through the whole intro, then it exits
+      if (started) {
+        const t = clamp01((performance.now() - startT) / RUN);
+        prog = easeInOut(t);
+        if (t >= 1 && !exiting) runExit();
+      }
       apply();
-      // ready once the entrance settles
+      // ready once the entrance settles (only now can a scroll fire the run)
       if (!ready && entered >= 1) ready = true;
-      // auto-exit when fully flattened + zoomed
-      if (ready && prog > 0.92 && !exiting) runExit();
       raf = requestAnimationFrame(tick);
     };
 
-    const bump = (d) => { if (!reduce && !locked) target = Math.max(0, Math.min(1, target + d)); };
-    const onWheel = (e) => { if (ready && !locked) bump(e.deltaY / 2100); };
+    // one scroll, swipe, tap, or arrow key plays the full intro (not a scrub)
+    const begin = () => { if (ready && !started) { started = true; startT = performance.now(); } };
+    const onWheel = (e) => { if (e.deltaY > 2) begin(); };
     let ty0 = null;
     const onTouchStart = (e) => { ty0 = e.touches[0].clientY; };
-    const onTouchMove = (e) => { if (ty0 != null && ready && !locked) { bump((ty0 - e.touches[0].clientY) / 820); ty0 = e.touches[0].clientY; } };
-    const onClick = () => { if (ready && !locked) { target = 1; locked = true; } };
-    const onKey = (e) => { if (ready && !locked && (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter' || e.key === 'PageDown')) { target = 1; locked = true; } };
+    const onTouchMove = (e) => { if (ty0 != null && ty0 - e.touches[0].clientY > 6) begin(); };
+    const onClick = () => begin();
+    const onKey = (e) => { if (['ArrowDown', ' ', 'Spacebar', 'Enter', 'PageDown'].includes(e.key)) begin(); };
 
     const runExit = () => {
       if (exiting) return;
@@ -126,18 +128,18 @@ export default function Intro({ onExit }) {
     };
 
     if (reduce) {
-      prog = 1; target = 1; entered = 1; ready = true;
+      prog = 1; entered = 1; ready = true;
       apply();
-      window.addEventListener('click', onClick, { passive: true });
-      window.addEventListener('keydown', onKey);
-      // let a click exit in reduced mode
+      // reduced motion: skip the animation; any input dissolves straight to the hero
       const exitNow = () => runExit();
       window.addEventListener('wheel', exitNow, { passive: true });
+      window.addEventListener('click', exitNow, { passive: true });
+      window.addEventListener('keydown', exitNow);
       return () => {
         cancelAnimationFrame(raf);
-        window.removeEventListener('click', onClick);
-        window.removeEventListener('keydown', onKey);
         window.removeEventListener('wheel', exitNow);
+        window.removeEventListener('click', exitNow);
+        window.removeEventListener('keydown', exitNow);
         document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
         if (prevRestore !== null) window.history.scrollRestoration = prevRestore;
@@ -263,8 +265,12 @@ export default function Intro({ onExit }) {
 
       <div ref={hintRef} style={{
         position: 'absolute', bottom: 'clamp(18px,4vh,34px)', left: 0, right: 0, textAlign: 'center', opacity: 0,
-        fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: 'clamp(10px,1.1vw,12px)',
-        letterSpacing: '.18em', textTransform: 'uppercase', color: 'rgba(58,44,26,.62)' }}>Scroll to enter ↓</div>
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+        fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(11px,1.1vw,13px)',
+        letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(58,44,26,.78)' }}>
+        <span>Scroll to Enter</span>
+        <span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1, animation: 'hint-bob 1.7s ease-in-out infinite' }}>&darr;</span>
+      </div>
     </div>
   );
 }

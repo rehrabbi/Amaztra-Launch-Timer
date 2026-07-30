@@ -492,7 +492,6 @@ function IngredientsDesktop() {
             {/* dose of the selected active, on a scale shared by all six in this format */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '18px', maxWidth: '440px' }}>
               <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 500, fontSize: '13px', letterSpacing: '.1em', color: '#8a5f1c', whiteSpace: 'nowrap' }}>PER {fmt === 'capsule' ? 'CAPSULE' : 'SACHET'}</span>
-              <span data-card-dose style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '20px', color: '#221a12', whiteSpace: 'nowrap' }}>{doseText(DOSE[fmt][active])}</span>
               <span data-card-delta style={{ opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px', whiteSpace: 'nowrap' }}>{multText(active)}</span>
               <span aria-hidden="true" style={{ flex: 1, height: '4px', borderRadius: '2px', background: 'rgba(23,17,14,.15)', overflow: 'hidden' }}>
                 <span style={{ display: 'block', height: '100%', width: barPct(DOSE[fmt][active]), borderRadius: '2px', background: 'linear-gradient(90deg,#8a5f1c,#C99A34)', transition: 'width .6s cubic-bezier(.23,1,.32,1)' }} />
@@ -547,7 +546,6 @@ function IngredientsDesktop() {
                   fontSize: '11px', letterSpacing: '.06em', textTransform: 'uppercase',
                 }}>{ing.k}</span>
                 <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span data-dose style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '11px', fontWeight: 700, color: isActive ? '#fff' : '#C6A24C' }}>{doseText(DOSE[fmt][idx])}</span>
                   <span data-delta style={{
                     opacity: fmt === 'capsule' ? 1 : 0, fontFamily: "'Space Grotesk',sans-serif", fontSize: '9px',
                     fontWeight: 700, letterSpacing: '.04em', color: '#141210',
@@ -721,7 +719,6 @@ function IngredientsMobile() {
         <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '.02em', color: '#8a5f1c' }}>{cur.s}</span>
         <h3 ref={nameRef} style={{ margin: '8px 0 0', fontFamily: "'Anton',sans-serif", textTransform: 'uppercase', fontSize: 'clamp(40px,12vw,54px)', lineHeight: 0.9, letterSpacing: '-.01em', color: '#221a12' }}>{cur.k}</h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-          <span style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 800, fontSize: '17px', color: '#221a12' }}>{doseText(DOSE[fmt][active])}</span>
           {fmt === 'capsule' ? (
             <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '10px', fontWeight: 700, letterSpacing: '.04em', color: '#221a12', background: 'linear-gradient(180deg,#F6E39A,#C99A34)', borderRadius: '2px', padding: '2px 5px' }}>{multText(active)}</span>
           ) : null}

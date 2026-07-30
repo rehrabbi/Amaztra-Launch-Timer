@@ -150,6 +150,9 @@ button{ font: inherit; }
   .hero-sticky, .fullpage { min-height:100dvh; scroll-snap-align:start; scroll-snap-stop:always; }
 }
 
+/* ---- intro "Scroll to Enter" cue: a gentle bob on the arrow ---- */
+@keyframes hint-bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(5px); } }
+
 /* ---- Origin format toggle: sliding gold thumb, press bounce, hover affordance ---- */
 .origin-toggle{ position:relative; display:inline-flex; padding:4px; border-radius:999px;
   border:1px solid rgba(198,162,76,.35); background:rgba(20,18,16,.6);

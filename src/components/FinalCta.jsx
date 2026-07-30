@@ -147,6 +147,7 @@ function FinalCtaDesktop() {
             Shop Coffee {'&'} Capsules
             <span aria-hidden="true" data-anim style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'cta-bshine 5s ease-in-out infinite' }} />
           </a>
+          <span data-reveal data-reveal-delay=".38" style={{ display: 'block', opacity: reduce ? 1 : 0, marginTop: '14px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12px', letterSpacing: '.16em', textTransform: 'uppercase', color: '#C6A24C' }}>Click Here to Order</span>
         </div>
       </div>
     </section>
@@ -251,6 +252,7 @@ function FinalCtaMobile() {
           Shop Coffee {'&'} Capsules
           <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(246,227,154,.4),transparent)', animation: reduce ? 'none' : 'fm-btnshine 5s ease-in-out 1.6s infinite' }} />
         </a>
+        <span data-r="0.82" style={{ opacity: reduce ? 1 : 0, marginTop: '12px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '11.5px', letterSpacing: '.16em', textTransform: 'uppercase', color: '#C6A24C' }}>Click Here to Order</span>
       </div>
     </section>
   );

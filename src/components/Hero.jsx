@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { doorHandoff, isNavLocked, registerHeroReset } from '../nav.js';
+import { doorHandoff, isNavLocked, registerHeroReset, markHeroDone } from '../nav.js';
+import { LINKS } from '../data.js';
 import { onImgError } from '../imgFallback.js';
 
 /**
@@ -152,6 +153,7 @@ export default function Hero({ introDone }) {
     // the clip has played out: the doors close over the hero and open on Story
     const release = () => {
       playing = false; done = true;
+      markHeroDone();   // hand the hero to the navigator; no more scene replays
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('touchmove', onTouchMove);
@@ -359,6 +361,14 @@ export default function Hero({ introDone }) {
                 style={{ position: 'absolute', right: '2%', bottom: 0, width: '74%', objectFit: 'contain', filter: 'brightness(.9) drop-shadow(0 18px 40px rgba(0,0,0,.5))', userSelect: 'none', WebkitUserDrag: 'none', zIndex: 1, animation: 'am-float2 11s ease-in-out -2.5s infinite' }} />
             </div>
           </div>
+        </div>
+
+        {/* order CTA under the product duo; fades out as the scene begins (cueRef) */}
+        <div ref={cueRef} className="hero-cta" style={{ position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '9px', margin: 'clamp(4px,1.4vh,16px) auto 0' }}>
+          <a className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '14px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(14px,1.5vw,16px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
+            Shop coffee {'&'} capsules<span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
+          </a>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12px', letterSpacing: '.16em', textTransform: 'uppercase', color: '#C6A24C' }}>Click Here to Order</span>
         </div>
 
       </section>

@@ -1,77 +1,134 @@
-# AMAZTRA
+<div align="center">
 
-A cinematic single-page site for AMAZTRA, an antioxidant coffee blend (glutathione,
-collagen and astaxanthin folded into the coffee you already drink). Built with
-**Vite + React 18**, scoped inline styles, and a shared set of keyframes in
-`src/index.css`. Every section has one signature motion and a full
-`prefers-reduced-motion` fallback.
+# &#9749; AMAZTRA
+
+### Beauty you can brew and take.
+
+A cinematic single-page site for **AMAZTRA**, a beauty-from-within supplement by
+Amazing Pharma Corporation, made in two formats: an instant-coffee sachet and a
+daily capsule, sharing the same six actives.
+
+<p>
+  <img alt="Vite 5" src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white">
+  <img alt="React 18" src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black">
+  <img alt="Custom CSS" src="https://img.shields.io/badge/styling-custom%20CSS-C6A24C">
+  <img alt="Deploy Vercel" src="https://img.shields.io/badge/deploy-Vercel-000000?logo=vercel&logoColor=white">
+  <img alt="Reduced motion ready" src="https://img.shields.io/badge/a11y-reduced--motion-2ea44f">
+</p>
+
+</div>
+
+---
+
+## Overview
+
+AMAZTRA reads top to bottom as one continuous story: a loader hands off to a
+cinematic hero, the page moves one full screen per scroll, and each section carries
+a single signature motion. It is built with **Vite 5** and **React 18**, styled
+entirely in scoped inline styles plus a shared set of `@keyframes` in
+`src/index.css`. No CSS framework.
+
+Every content section ships a **dedicated mobile layout** alongside the desktop one,
+and every animation has a full `prefers-reduced-motion` fallback.
+
+## Highlights
+
+- **One story, one scroll.** A scroll navigator (`src/nav.js`) plus CSS scroll-snap
+  advance exactly one section per scroll on both desktop and mobile.
+- **Two formats, one system.** Coffee and capsule are shown side by side, and the
+  Origin and What's Inside sections switch between them with a toggle.
+- **Motion with a safety net.** Reveals use `IntersectionObserver` + the Web
+  Animations API; ambient loops and reveals stand down under reduced motion.
+- **Tuned media.** Clips are served as web-encoded MP4s with WebP imagery and lazy
+  loading; the full-quality source clips are archived out of the build.
 
 ## The page
 
-The site reads top to bottom as one continuous story:
+| # | Section | Signature motion |
+|---|---------|------------------|
+| 1 | **Intro** loader | A tablet flattens and zooms through into the hero on a single scroll, with a "Scroll to Enter" cue. |
+| 2 | **Hero** | "Beauty you can brew and take" masthead; one scroll flies the box and pouch to centre, plays the lifestyle clip, and opens branded doors onto the story. Carries the order button. |
+| 3 | **Origin** (`Story`) | "Beauty shouldn't feel like work, it should brew." The lines rise, a red strike wipes the crossed-out word, and a Coffee / Capsule toggle cross-dissolves the copy and clip. |
+| 4 | **Ritual** | The morning reframed as an order card whose steps pop-fill in sequence. |
+| 5 | **Two Ways** (`TwoWays`) | Coffee and capsule as matching cards, so neither reads as the add-on. |
+| 6 | **Ingredients** | Six actives in an orbit on desktop, a swipeable rotator on mobile, with relative bars and a capsule multiplier. |
+| 7 | **What's Inside** (`WhatsInside`) | The printed label, with a Coffee / Capsule tab pair and a tap-to-zoom nutrition panel. |
+| 8 | **Payoff** (`Benefits`) | A dark poster with a lit gold "GLOW" and a compounding results chart that draws in on scroll. |
+| 9 | **Good to Know** (`Faq`) | A self-playing SMS thread on desktop; a tap-a-question chat on mobile. |
+| 10 | **Final CTA** (`FinalCta`) | The closing "Formula Map": layered pouch, box, blister and sachet, two crossfading models, and the shop call to action. |
 
-1. **Intro** loader: gold wordmark, a 00 to 100 counter, and a scroll-to-enter gesture that slides the panel away.
-2. **Hero**: "Beauty you can brew" masthead with scroll-linked per-word motion and a product pouch that flies into the ingredients orbit.
-3. **Ingredients** orbit: rotating rings and an auto-cycling active ingredient with benefit popouts on hover, focus or click.
-4. **Origin** (`Story`): kinetic "Beauty shouldn't feel like work, it should brew." The lines rise in, then a red strike wipes across "work".
-5. **Ritual**: the morning reframed as an order card, whose Brew and Sip checkboxes pop-fill in sequence while Glow keeps loading.
-6. **What's inside** (`WhatsInside`): a kraft "Supplement Facts" card beside a pure-CSS espresso machine that pours coffee into a glass cup on view.
-7. **Payoff** (`Benefits`): a red "GLOW." poster with drifting beans and steam, over a results timeline (Week 1 / 4 / 12) whose curve draws in on scroll.
-8. **Good to know** (`Faq`): a phone that plays a self-running SMS conversation with typing dots, a gold scrollbar, and a replay button.
-9. **Final CTA**: one closing scene with a day/night toggle. Day is a warm dawn (sun, clouds); night is deep indigo (moon, stars). The copy and mood swap with the toggle, with one soft call to action out to the shop.
+## Tech stack
 
-## Motion
+| Area | Choice |
+|------|--------|
+| Build | Vite 5 (dev server + production build) |
+| UI | React 18 (`createRoot`) |
+| Styling | Scoped inline styles + shared keyframes in `src/index.css` (no framework) |
+| Motion | `IntersectionObserver` + Web Animations API, `cubic-bezier(.23,1,.32,1)` easing |
+| Fonts | Anton, Bricolage Grotesque, Cinzel, Space Grotesk (Google Fonts) |
+| Media | Web-encoded MP4 + WebP, lazy-loaded; originals archived in `media-originals/` |
 
-- Reveal-on-scroll uses `IntersectionObserver` + the Web Animations API (`el.animate`), with `cubic-bezier(.23,1,.32,1)` easing and staggered delays.
-- The hero word-scatter and the payoff timeline are scroll-linked (rAF-throttled scroll handlers).
-- The espresso cup pours once on view; the phone chat plays once on view and can be replayed.
-- All ambient loops and reveals are disabled or shown at rest under `prefers-reduced-motion`.
-
-## Stack
-
-- Vite 5 (dev server + build)
-- React 18 (`createRoot`)
-- No CSS framework: global resets and keyframes live in `src/index.css`, the rest is scoped inline styles.
-- Fonts (Anton, Bricolage Grotesque, Cinzel, Marcellus, Space Grotesk, Space Mono) load from Google Fonts, so the first paint needs a network connection.
-
-## Structure
+## Project structure
 
 ```
-.
-  index.html                # fonts + root mount
-  src/
-    main.jsx                # React entry
-    App.jsx                 # intro gate + page composition
-    data.js                 # ingredient data, angles, pouch path, outbound links
-    index.css               # resets, keyframes, shared helpers, responsive rules
-    components/
-      Intro.jsx             # loader: 00->100 counter, scroll-to-enter, slide-off
-      Hero.jsx              # masthead with scroll-linked per-word motion
-      Ingredients.jsx       # rotating orbit, auto-cycling active ingredient
-      Story.jsx             # Origin: kinetic headline + red strike
-      Ritual.jsx            # order card with sequential checkbox pop-fill
-      WhatsInside.jsx       # supplement facts + CSS espresso machine pour
-      Benefits.jsx          # Payoff: GLOW poster + scroll-drawn timeline
-      Faq.jsx               # Good to know: self-playing phone chat
-      FinalCta.jsx          # day/night toggle closing scene
-  public/assets/            # pouch images
+index.html                  # fonts + root mount
+src/
+  main.jsx                  # React entry
+  App.jsx                   # intro gate + section composition
+  nav.js                    # scroll navigator, section handoffs, branded doors
+  data.js                   # ingredients, dose data, pouch path, outbound links
+  index.css                 # resets, keyframes, shared helpers, responsive rules
+  imgFallback.js            # WebP with a graceful fallback
+  useLazyVideo.js           # load clips only as they come into view
+  components/
+    Intro.jsx               # tablet loader, one-scroll flatten + hand-off
+    Hero.jsx                # masthead scene, product duo, order button
+    Story.jsx               # Origin, Coffee/Capsule toggle
+    Ritual.jsx              # order-card morning
+    TwoWays.jsx             # coffee and capsule, side by side
+    Ingredients.jsx         # orbit (desktop) / rotator (mobile)
+    WhatsInside.jsx         # printed label + nutrition panel
+    Benefits.jsx            # Payoff poster + results chart
+    Faq.jsx                 # Good to Know chat
+    FinalCta.jsx            # Formula Map closing scene
+public/assets/
+  img/                      # WebP + PNG product art
+  video/                    # web-tuned .mp4 clips + poster stills
+media-originals/            # full-quality source clips, kept out of the build
 ```
 
-## Run
+## Getting started
 
 ```bash
 npm install
-npm run dev      # http://localhost:5502
+npm run dev        # http://localhost:5502
 ```
 
-Build for production:
+Production build:
 
 ```bash
-npm run build
-npm run preview
+npm run build      # outputs to dist/
+npm run preview    # serve the build locally
 ```
 
-## Notes
+## Deployment
 
-- The shop link is a placeholder. Set the real store URL in `src/data.js` (`LINKS.shop`).
-- The Supplement Facts figures in `WhatsInside.jsx` are sample values. Replace them with the verified label before publishing.
+The site is a static build and deploys to **Vercel**. Connect the repository once
+(Framework: Vite, Build: `npm run build`, Output: `dist`), and every push to `main`
+ships to production while pull requests get their own preview URL.
+
+## Before launch
+
+- **Shop link:** `LINKS.shop` in `src/data.js` is a placeholder. Set the real store URL.
+- **Nutrition facts:** the figures in `WhatsInside.jsx` are transcribed from the packs.
+  Re-check them against the current approved label.
+- **Compliance:** AMAZTRA is a food supplement with no approved therapeutic claims.
+  Keep the copy responsible: it supports a beauty-from-within routine, it is not a cure.
+
+---
+
+<div align="center">
+
+Amazing Pharma Corporation, Antipolo City, Rizal, Philippines. All rights reserved.
+
+</div>

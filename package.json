@@ -1,8 +1,9 @@
 {
-  "name": "amaztra-real-stack",
+  "name": "amaztra-website",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "Cinematic single-page site for AMAZTRA, a beauty-from-within coffee and capsule by Amazing Pharma Corporation. Vite + React 18, custom CSS.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -363,12 +363,16 @@ export default function Hero({ introDone }) {
           </div>
         </div>
 
-        {/* order CTA under the product duo; fades out as the scene begins (cueRef) */}
-        <div ref={cueRef} className="hero-cta" style={{ position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '9px', margin: 'clamp(4px,1.4vh,16px) auto 0' }}>
-          <a className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '14px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(14px,1.5vw,16px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
-            Shop coffee {'&'} capsules<span aria-hidden="true" style={{ fontSize: '1.1em', lineHeight: 1 }}>&rarr;</span>
+        {/* order CTA + scroll cue under the product duo; fade out as the scene begins (cueRef) */}
+        <div ref={cueRef} className="hero-cta" style={{ position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', margin: 'clamp(4px,1.4vh,16px) auto 0' }}>
+          <a className="cta-btn" href={LINKS.shop} target="_blank" rel="noopener noreferrer" style={{ position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '14px 30px', minHeight: '44px', borderRadius: '3px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 'clamp(14px,1.5vw,16px)', color: '#F6E39A', background: 'rgba(11,9,8,.5)', border: '1px solid #C6A24C', whiteSpace: 'nowrap' }}>
+            Shop Coffee {'&'} Capsules
           </a>
-          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12px', letterSpacing: '.16em', textTransform: 'uppercase', color: '#C6A24C' }}>Click Here to Order</span>
+          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '12.5px', letterSpacing: '.03em', color: '#C6A24C' }}>Click Here to Order</span>
+          <span style={{ marginTop: 'clamp(2px,1vh,10px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: '11px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(198,162,76,.62)' }}>
+            Scroll to Enter
+            <span aria-hidden="true" style={{ fontSize: '1.2em', lineHeight: 1, animation: 'hint-bob 1.7s ease-in-out infinite' }}>&darr;</span>
+          </span>
         </div>
 
       </section>

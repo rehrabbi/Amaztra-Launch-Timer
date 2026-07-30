@@ -195,8 +195,16 @@ export function initNavigator() {
     if (performance.now() < cool) { e.preventDefault(); return; }
     if (Math.abs(e.deltaY) < 4) return;
     const dir = e.deltaY > 0 ? 1 : -1;
-    if (scrollableUnder(e.target, dir)) return;   // an inner scroll area takes the wheel first
     const targets = getTargets();
+    // Once the hero has played it snaps like every other section: one controlled
+    // move per scroll. Skip canNative here, which would see Story's tall body below
+    // the hero and let the wheel fall through to free native scrolling.
+    if (state.heroDone && targets.length && window.scrollY < yOf(targets[0]) - 4) {
+      e.preventDefault();
+      move(dir);
+      return;
+    }
+    if (scrollableUnder(e.target, dir)) return;   // an inner scroll area takes the wheel first
     if (canNative(dir, targets, nearestIndex(targets))) return;   // let tall sections scroll through first
     e.preventDefault();
     move(dir);

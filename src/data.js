@@ -30,7 +30,6 @@ export const FORMATS = {
 export const POUCH = 'assets/img/pouch/1-front-cut.webp';
 
 // Outbound links used by the final CTA.
-// TODO: replace SHOP_URL with the real AMAZTRA store URL.
 export const LINKS = {
-  shop: 'https://example.com/shop',
+  shop: 'https://vt.tiktok.com/ZS451WDMG/?page=TikTokShop',
 };

@@ -1,34 +1,34 @@
-import { useEffect, useState } from 'react';
-import { initNavigator } from './nav.js';
-import Intro from './components/Intro.jsx';
-import Hero from './components/Hero.jsx';
-import Ingredients from './components/Ingredients.jsx';
-import Story from './components/Story.jsx';
-import Ritual from './components/Ritual.jsx';
-import TwoWays from './components/TwoWays.jsx';
-import WhatsInside from './components/WhatsInside.jsx';
-import Benefits from './components/Benefits.jsx';
-import Faq from './components/Faq.jsx';
-import FinalCta from './components/FinalCta.jsx';
+import { useEffect } from 'react';
+import { initMotion, scrollToId } from './lib/motion.js';
+import Header from './sections/Header.jsx';
+import Hero from './sections/Hero.jsx';
+import Story from './sections/Story.jsx';
+import Trust from './sections/Trust.jsx';
+import MoreInfo from './sections/MoreInfo.jsx';
+import Join from './sections/Join.jsx';
+import Footer from './sections/Footer.jsx';
+import StickyCta from './sections/StickyCta.jsx';
 
 export default function App() {
-  const [introDone, setIntroDone] = useState(false);
-
-  // the hero owns its own scroll-lock; the rest of the site scrolls natively
-  useEffect(() => initNavigator(), []);
+  useEffect(() => {
+    const cleanup = initMotion();
+    const id = window.location.hash.slice(1);
+    if (id) requestAnimationFrame(() => scrollToId(id));
+    return cleanup;
+  }, []);
 
   return (
-    <div style={{ background: '#141210' }}>
-      {!introDone && <Intro onExit={() => setIntroDone(true)} />}
-      <Hero introDone={introDone} />
-      <Story />
-      <Ritual />
-      <TwoWays />
-      <Ingredients />
-      <WhatsInside />
-      <Benefits />
-      <Faq />
-      <FinalCta />
-    </div>
+    <>
+      <Header />
+      <main id="main">
+        <Hero />
+        <Story />
+        <Trust />
+        <MoreInfo />
+        <Join />
+      </main>
+      <Footer />
+      <StickyCta />
+    </>
   );
 }

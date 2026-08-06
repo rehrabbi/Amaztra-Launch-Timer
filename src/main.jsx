@@ -1,7 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App.jsx';
+// load order matters: tokens/base first, then section layout can override
 import './index.css';
+import './sections.css';
+import './immersive.css';
+import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

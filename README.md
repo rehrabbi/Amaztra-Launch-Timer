@@ -1,134 +1,91 @@
-<div align="center">
+# Amaztra Launch Timer
 
-# &#9749; AMAZTRA
+A soft-launch / waitlist site for **AMAZTRA** (a beauty-from-within coffee and capsule), built around a **live countdown to the August 18, 2026 launch**. Visitors watch the timer, learn the gist, and join the email waitlist.
 
-### Beauty you can brew and take.
-
-A cinematic single-page site for **AMAZTRA**, a beauty-from-within supplement by
-Amazing Pharma Corporation, made in two formats: an instant-coffee sachet and a
-daily capsule, sharing the same six actives.
-
-<p>
-  <img alt="Vite 5" src="https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white">
-  <img alt="React 18" src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black">
-  <img alt="Custom CSS" src="https://img.shields.io/badge/styling-custom%20CSS-C6A24C">
-  <img alt="Deploy Vercel" src="https://img.shields.io/badge/deploy-Vercel-000000?logo=vercel&logoColor=white">
-  <img alt="Reduced motion ready" src="https://img.shields.io/badge/a11y-reduced--motion-2ea44f">
-</p>
-
-</div>
+This is a **separate site** from the product landing page at https://amaztra.vercel.app. That page stays live and is linked from here as "Visit AMAZTRA Page". This launch timer should deploy to its **own URL**, not replace the product page.
 
 ---
 
-## Overview
+## What it is
 
-AMAZTRA reads top to bottom as one continuous story: a loader hands off to a
-cinematic hero, the page moves one full screen per scroll, and each section carries
-a single signature motion. It is built with **Vite 5** and **React 18**, styled
-entirely in scoped inline styles plus a shared set of `@keyframes` in
-`src/index.css`. No CSS framework.
+A single-page, centered, immersive scroll experience:
 
-Every content section ships a **dedicated mobile layout** alongside the desktop one,
-and every animation has a full `prefers-reduced-motion` fallback.
+**Hero (live countdown)** to **Story** to **The honest part** to **Visit AMAZTRA Page (invite)** to **Join the Waitlist** to **Footer**.
 
-## Highlights
-
-- **One story, one scroll.** A scroll navigator (`src/nav.js`) plus CSS scroll-snap
-  advance exactly one section per scroll on both desktop and mobile.
-- **Two formats, one system.** Coffee and capsule are shown side by side, and the
-  Origin and What's Inside sections switch between them with a toggle.
-- **Motion with a safety net.** Reveals use `IntersectionObserver` + the Web
-  Animations API; ambient loops and reveals stand down under reduced motion.
-- **Tuned media.** Clips are served as web-encoded MP4s with WebP imagery and lazy
-  loading; the full-quality source clips are archived out of the build.
-
-## The page
-
-| # | Section | Signature motion |
-|---|---------|------------------|
-| 1 | **Intro** loader | A tablet flattens and zooms through into the hero on a single scroll, with a "Scroll to Enter" cue. |
-| 2 | **Hero** | "Beauty you can brew and take" masthead; one scroll flies the box and pouch to centre, plays the lifestyle clip, and opens branded doors onto the story. Carries the order button. |
-| 3 | **Origin** (`Story`) | "Beauty shouldn't feel like work, it should brew." The lines rise, a red strike wipes the crossed-out word, and a Coffee / Capsule toggle cross-dissolves the copy and clip. |
-| 4 | **Ritual** | The morning reframed as an order card whose steps pop-fill in sequence. |
-| 5 | **Two Ways** (`TwoWays`) | Coffee and capsule as matching cards, so neither reads as the add-on. |
-| 6 | **Ingredients** | Six actives in an orbit on desktop, a swipeable rotator on mobile, with relative bars and a capsule multiplier. |
-| 7 | **What's Inside** (`WhatsInside`) | The printed label, with a Coffee / Capsule tab pair and a tap-to-zoom nutrition panel. |
-| 8 | **Payoff** (`Benefits`) | A dark poster with a lit gold "GLOW" and a compounding results chart that draws in on scroll. |
-| 9 | **Good to Know** (`Faq`) | A self-playing SMS thread on desktop; a tap-a-question chat on mobile. |
-| 10 | **Final CTA** (`FinalCta`) | The closing "Formula Map": layered pouch, box, blister and sachet, two crossfading models, and the shop call to action. |
+The goal is anticipation plus signups. Full product detail (ingredients, FAQ, how it works) intentionally lives on the product page, not here; this site points people there.
 
 ## Tech stack
 
-| Area | Choice |
-|------|--------|
-| Build | Vite 5 (dev server + production build) |
-| UI | React 18 (`createRoot`) |
-| Styling | Scoped inline styles + shared keyframes in `src/index.css` (no framework) |
-| Motion | `IntersectionObserver` + Web Animations API, `cubic-bezier(.23,1,.32,1)` easing |
-| Fonts | Anton, Bricolage Grotesque, Cinzel, Space Grotesk (Google Fonts) |
-| Media | Web-encoded MP4 + WebP, lazy-loaded; originals archived in `media-originals/` |
+- **Vite + React 18**, hand-written CSS (design tokens in `src/index.css`).
+- **GSAP + ScrollTrigger** for section pinning and scroll reveals. No smooth-scroll library: native scroll is kept so keyboard scrolling works.
+- **No backend.** The waitlist form posts to a Formspree-compatible endpoint.
 
-## Project structure
-
-```
-index.html                  # fonts + root mount
-src/
-  main.jsx                  # React entry
-  App.jsx                   # intro gate + section composition
-  nav.js                    # scroll navigator, section handoffs, branded doors
-  data.js                   # ingredients, dose data, pouch path, outbound links
-  index.css                 # resets, keyframes, shared helpers, responsive rules
-  imgFallback.js            # WebP with a graceful fallback
-  useLazyVideo.js           # load clips only as they come into view
-  components/
-    Intro.jsx               # tablet loader, one-scroll flatten + hand-off
-    Hero.jsx                # masthead scene, product duo, order button
-    Story.jsx               # Origin, Coffee/Capsule toggle
-    Ritual.jsx              # order-card morning
-    TwoWays.jsx             # coffee and capsule, side by side
-    Ingredients.jsx         # orbit (desktop) / rotator (mobile)
-    WhatsInside.jsx         # printed label + nutrition panel
-    Benefits.jsx            # Payoff poster + results chart
-    Faq.jsx                 # Good to Know chat
-    FinalCta.jsx            # Formula Map closing scene
-public/assets/
-  img/                      # WebP + PNG product art
-  video/                    # web-tuned .mp4 clips + poster stills
-media-originals/            # full-quality source clips, kept out of the build
-```
-
-## Getting started
+## Run it
 
 ```bash
 npm install
-npm run dev        # http://localhost:5502
+npm run dev       # http://localhost:5502
+npm run build     # production build to dist/
+npm run preview
 ```
 
-Production build:
+## Project structure
 
-```bash
-npm run build      # outputs to dist/
-npm run preview    # serve the build locally
-```
+- `src/main.jsx` — entry. CSS load order matters: `index.css` then `sections.css` then `immersive.css`.
+- `src/App.jsx` — composes the sections, inits motion, handles deep-link scroll.
+- `src/content.js` — **all copy and config** (launch date, CTA labels, landing URL). Edit copy here first.
+- `src/lib/` — `motion.js` (GSAP setup + `scrollToId`), `useGsap.js`, `useCountdown.js`, `hooks.js` (reveal / reduced-motion / media query), `waitlist.js` (form submit).
+- `src/sections/` — `Header`, `Hero`, `Story`, `Trust`, `MoreInfo`, `Join`, `Footer`, `StickyCta`, `WaitlistForm`, `Ph` (placeholder marker), `icons`.
+- `src/index.css` — design tokens + base + form / accordion / reveal utilities.
+- `src/sections.css`, `src/immersive.css` — section layout (immersive loads last and wins the cascade).
 
-## Deployment
+## Design rules (keep these)
 
-The site is a static build and deploys to **Vercel**. Connect the repository once
-(Framework: Vite, Build: `npm run build`, Output: `dist`), and every push to `main`
-ships to production while pull requests get their own preview URL.
+- **Warm-light editorial.** Ivory background, ink text, **red is the only interactive accent**, gold is decorative. **Cinzel** display + **Space Grotesk** body.
+- **No em dashes** anywhere: code, copy, comments, commit messages. Use commas, colons, periods.
+- **Original copy only.** Do not reuse hooks or sentences from the product landing page. Only plain product facts are shared here.
+- **Only the two real products** (coffee pouch + capsule pack) as imagery, at their true proportions (no stretching).
+- Motion respects `prefers-reduced-motion`: GSAP effects are skipped and static fallbacks render.
+- **Everything is centered.**
 
-## Before launch
+## Commit rules (important)
 
-- **Shop link:** `LINKS.shop` in `src/data.js` is a placeholder. Set the real store URL.
-- **Nutrition facts:** the figures in `WhatsInside.jsx` are transcribed from the packs.
-  Re-check them against the current approved label.
-- **Compliance:** AMAZTRA is a food supplement with no approved therapeutic claims.
-  Keep the copy responsible: it supports a beauty-from-within routine, it is not a cure.
+- Author: **Jireh Rabbi R. Bernardo <jirehrabbi1202@gmail.com>**.
+- **Zero AI attribution.** Plain human commit messages. No "Co-Authored-By", no "Generated with", no mention of any assistant in messages, code, comments, filenames, or docs. Scan the diff before every commit.
 
 ---
 
-<div align="center">
+## What to do next (for the next session)
 
-Amazing Pharma Corporation, Antipolo City, Rizal, Philippines. All rights reserved.
+### Required before launch
 
-</div>
+1. **Wire the waitlist backend.** Create a free form at https://formspree.io and set `VITE_WAITLIST_ENDPOINT` in a local `.env` (see `.env.example`) and in the deploy host. Until it is set, the form validates input and shows "Signups are not open just yet"; it **never fakes a successful signup**.
+2. **Deploy to its own URL** (Vercel or Netlify, static `dist/`). Do **not** point it at `amaztra.vercel.app`; that address is the product page.
+3. **Confirm the launch moment.** The countdown targets `2026-08-18T00:00:00` in the visitor's local time (`LAUNCH_ISO` in `src/content.js`). Change it if a specific time or timezone is required.
+
+### Recommended additions
+
+- **Analytics:** fire a privacy-friendly event on successful signup. The submit resolves in `src/lib/waitlist.js`.
+- **Social image:** replace `public/og-image.jpg` with a launch-timer-specific image (the current one is from the product page). Titles/OG tags are in `index.html`.
+- **Duplicate handling:** server-side dedupe needs the backend; the form currently dedupes per browser via `localStorage`.
+- Optional: an "add to calendar" link for August 18.
+
+### Nice to have / cleanup
+
+- **Prune unused assets.** The site only uses `public/assets/img/amaztra-box.webp`, `public/assets/img/pouch/clean-front.webp`, `public/assets/img/apc-logo.webp`, the favicon/icons, and `og-image.jpg`. Every other image in `public/assets/img` and **all** videos in `public/assets/video` are unused and can be deleted to slim the repo.
+- Run Lighthouse. The main JS weight is GSAP (~97 kB gzipped).
+- Test on a mid-range mobile device.
+
+### Known limitations
+
+- **Deep-link precision:** loading a fresh page at an anchor like `/#more` can land slightly off because the pinned Story section shifts element offsets (a ScrollTrigger behavior). In-page nav clicks are unaffected.
+- There are currently **no placeholders** on the page. If a brand timeline is re-added later, use the `Ph` component so placeholders stay clearly marked.
+
+---
+
+## Quick reference
+
+- **Launch date:** August 18, 2026 (`LAUNCH_ISO`, `LAUNCH_DATE_LABEL` in `src/content.js`).
+- **Primary CTA:** "Join the Waitlist" (`CTA_LABEL`).
+- **Secondary CTA:** "Visit AMAZTRA Page" (`VISIT_LABEL`) linking to `LANDING_URL` (https://amaztra.vercel.app).
+- **Section order:** Hero, Story, Trust, MoreInfo, Join, Footer.

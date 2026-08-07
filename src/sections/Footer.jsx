@@ -1,6 +1,7 @@
 import { NAV_LINKS, FOOTER_NOTE, CTA_LABEL, VISIT_LABEL, LANDING_URL } from '../content.js';
 import { LINKS } from '../data.js';
 import { scrollToId as go } from '../lib/motion.js';
+import Wordmark from './Wordmark.jsx';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -8,7 +9,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer__grid">
         <div className="footer__brand">
-          <span className="footer__word">AMAZTRA</span>
+          <Wordmark variant="footer" />
           <p>Beauty-from-within coffee and capsule.</p>
         </div>
         <nav className="footer__nav" aria-label="Footer">

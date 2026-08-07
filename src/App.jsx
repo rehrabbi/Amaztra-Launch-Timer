@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { initMotion, scrollToId } from './lib/motion.js';
-import Header from './sections/Header.jsx';
+import TopBar from './sections/TopBar.jsx';
 import Hero from './sections/Hero.jsx';
 import Story from './sections/Story.jsx';
-import Trust from './sections/Trust.jsx';
-import MoreInfo from './sections/MoreInfo.jsx';
+import More from './sections/More.jsx';
 import Join from './sections/Join.jsx';
 import Footer from './sections/Footer.jsx';
 import StickyCta from './sections/StickyCta.jsx';
@@ -19,12 +18,11 @@ export default function App() {
 
   return (
     <>
-      <Header />
+      <TopBar />
       <main id="main">
         <Hero />
         <Story />
-        <Trust />
-        <MoreInfo />
+        <More />
         <Join />
       </main>
       <Footer />

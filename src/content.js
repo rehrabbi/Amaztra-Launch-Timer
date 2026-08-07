@@ -17,8 +17,9 @@ export const LANDING_URL = 'https://amaztra.vercel.app';
 export const ANNOUNCE = `Amaztra opens ${LAUNCH_DATE_LABEL}. The list gets in first.`;
 
 export const HERO = {
+  // kicker retained for reference; no longer rendered in the redesign.
   kicker: 'Soft launch',
-  title: ['Your glow', 'has a launch date.'],
+  title: ["Your Glow's", 'Launch Date'],
   openLabel: `Doors open ${LAUNCH_DATE_LABEL}`,
   sub: 'Amaztra is a beauty-from-within coffee and capsule. Six actives, in a cup you brew or a capsule you take. The list walks in first.',
   reassure: 'One email the day we open. Nothing else.',

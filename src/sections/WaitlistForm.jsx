@@ -4,6 +4,7 @@ import { CTA_LABEL } from '../content.js';
 import { Check, Arrow } from './icons.jsx';
 
 const MESSAGES = {
+  invalidName: { tone: 'error', text: 'Please enter your name.' },
   invalid: { tone: 'error', text: 'Please enter a valid email address.' },
   duplicate: { tone: 'ok', text: 'You are already on the list. Thank you.' },
   error: { tone: 'error', text: 'Something went wrong. Please try again in a moment.' },
@@ -11,28 +12,40 @@ const MESSAGES = {
 };
 
 // Accessible waitlist form with full states: idle, validating, loading,
-// success, duplicate, error, and not-configured. Never fakes a success.
+// success, duplicate, error, and not-configured. Collects a required full name
+// and email. Never fakes a success.
 export default function WaitlistForm({ id = 'default', dark = false }) {
+  const nameId = useId();
   const inputId = useId();
   const msgId = useId();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState('idle'); // idle | loading | ok | duplicate | invalid | error | unconfigured
+  const [status, setStatus] = useState('idle'); // idle | loading | ok | duplicate | invalidName | invalid | error | unconfigured
   const [hp, setHp] = useState(''); // honeypot
 
   const done = status === 'ok' || status === 'duplicate';
-  const invalid = status === 'invalid' || status === 'error';
+  const nameInvalid = status === 'invalidName';
+  const emailInvalid = status === 'invalid' || status === 'error';
   const msg = MESSAGES[status];
+
+  const resetIfIdle = () => {
+    if (status !== 'idle' && status !== 'loading') setStatus('idle');
+  };
 
   async function onSubmit(e) {
     e.preventDefault();
     if (status === 'loading' || done) return;
     if (hp) return; // bot filled the honeypot; ignore silently
+    if (!name.trim()) {
+      setStatus('invalidName');
+      return;
+    }
     if (!EMAIL_RE.test(email.trim())) {
       setStatus('invalid');
       return;
     }
     setStatus('loading');
-    const result = await submitWaitlist(email, { form: id });
+    const result = await submitWaitlist(email, { form: id, name: name.trim() });
     setStatus(result);
   }
 
@@ -53,6 +66,22 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
   return (
     <form className={`wl${dark ? ' wl--dark' : ''}`} onSubmit={onSubmit} noValidate>
       <div className="field">
+        <label htmlFor={nameId}>Full name</label>
+        <input
+          id={nameId}
+          type="text"
+          name="name"
+          autoComplete="name"
+          placeholder="Your full name"
+          value={name}
+          onChange={(e) => { setName(e.target.value); resetIfIdle(); }}
+          aria-invalid={nameInvalid}
+          aria-describedby={nameInvalid ? msgId : undefined}
+          disabled={status === 'loading'}
+          required
+        />
+      </div>
+      <div className="field">
         <label htmlFor={inputId}>Email address</label>
         <div className="wl__row">
           <input
@@ -63,9 +92,9 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
             autoComplete="email"
             placeholder="you@email.com"
             value={email}
-            onChange={(e) => { setEmail(e.target.value); if (status !== 'idle' && status !== 'loading') setStatus('idle'); }}
-            aria-invalid={invalid}
-            aria-describedby={msg ? msgId : undefined}
+            onChange={(e) => { setEmail(e.target.value); resetIfIdle(); }}
+            aria-invalid={emailInvalid}
+            aria-describedby={msg && !nameInvalid ? msgId : undefined}
             disabled={status === 'loading'}
             required
           />
@@ -93,10 +122,10 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
             )}
           </button>
         </div>
-        <p id={msgId} className="field__msg" data-tone={msg ? msg.tone : undefined} role="status" aria-live="polite">
-          {msg ? msg.text : ''}
-        </p>
       </div>
+      <p id={msgId} className="field__msg" data-tone={msg ? msg.tone : undefined} role="status" aria-live="polite">
+        {msg ? msg.text : ''}
+      </p>
       {import.meta.env.DEV && !isWaitlistConfigured() && (
         <p className="wl__hint">Dev note: VITE_WAITLIST_ENDPOINT not set, so live signups are disabled.</p>
       )}

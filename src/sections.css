@@ -108,9 +108,8 @@
 .hero__actions { display: flex; align-items: center; justify-content: center; gap: 0.7rem; flex-wrap: wrap; margin-top: 1.5rem; }
 .hero__reassure { margin-top: 1rem; font-size: 0.82rem; color: var(--ink-3); }
 
-/* ---- story (native sticky pin, scrubbed by lib/motion.js) ---- */
-.story { position: relative; background: var(--bg); height: 118vh; }
-.story__pin { position: sticky; top: 0; min-height: 74vh; display: flex; align-items: center; padding-block: clamp(1.5rem, 4vh, 3rem); }
+/* ---- story (the idea; shows on its own, no pin or scrub) ---- */
+.story { background: var(--bg); padding-block: clamp(48px, 5vw, 72px) clamp(20px, 2.5vw, 32px); }
 .story__inner { max-width: 64rem; margin-inline: auto; text-align: center; }
 .story__kicker { margin: 0 0 1.4rem; }
 .story__head {
@@ -124,7 +123,7 @@
 }
 
 /* ---- more (honest part + full picture merged) ---- */
-.more { padding-block: clamp(56px, 6vw, 88px); background: var(--bg); }
+.more { padding-block: clamp(32px, 4vw, 48px) clamp(56px, 6vw, 88px); background: var(--bg); }
 .more__inner { max-width: 52rem; margin-inline: auto; text-align: center; }
 .more__title {
   margin: 0.85rem 0 1rem; font-family: var(--font-display); font-weight: 600;

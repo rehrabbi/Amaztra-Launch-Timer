@@ -11,19 +11,12 @@ export const prefersReduce = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const clamp01 = (n) => Math.min(1, Math.max(0, n));
-
 export function initMotion() {
   const q = (sel) => document.querySelector(sel);
 
   const bar = q('[data-bar]');
   const pouch = q('[data-pouch]');
   const box = q('[data-box]');
-  const story = document.getElementById('story');
-  const kicker = q('[data-story-kicker]');
-  const l1 = q('[data-story-l1]');
-  const l2 = q('[data-story-l2]');
-  const body = q('[data-story-body]');
   const join = document.getElementById('join');
   const joinInner = q('[data-join-inner]');
   const joinGlow = q('[data-join-glow]');
@@ -39,13 +32,9 @@ export function initMotion() {
     el.style.transform = t;
   };
 
-  // Under reduced motion, resolve every scroll-driven element to its final,
-  // fully visible state once and skip the decorative work (parallax, scrub).
+  // Under reduced motion, resolve the join arrival to its final visible state
+  // once and skip the decorative work (parallax).
   if (reduce) {
-    setEl(kicker, '1', 'none');
-    setEl(l1, '1', 'none');
-    setEl(l2, '1', 'none');
-    setEl(body, '1', 'none');
     setEl(joinInner, '1', 'none');
     if (joinGlow) {
       joinGlow.style.opacity = '1';
@@ -61,28 +50,10 @@ export function initMotion() {
     // 5. fixed bar slides in past the hero countdown
     if (bar) bar.style.transform = y > 220 ? 'none' : 'translateY(-101%)';
 
-    if (!reduce) {
-      // 2. hero product parallax (differing rates create depth)
-      if (pouch && y < vh * 1.2) {
-        pouch.style.transform = `translateY(${y * -0.07}px)`;
-        if (box) box.style.transform = `translateY(${y * -0.13}px)`;
-      }
-
-      // 3. story pin scrub, keyed to progress through the tall section
-      if (story) {
-        const r = story.getBoundingClientRect();
-        const total = story.offsetHeight - vh;
-        const p = total > 0 ? clamp01(-r.top / total) : 0;
-        const seg = (a, b) => clamp01((p - a) / (b - a));
-        const k = seg(0, 0.08);
-        setEl(kicker, k, `translateY(${(1 - k) * 16}px)`);
-        const a = seg(0.06, 0.28);
-        setEl(l1, a, `translateY(${(1 - a) * 45}%)`);
-        const b = seg(0.22, 0.46);
-        setEl(l2, b, `translateY(${(1 - b) * 45}%)`);
-        const c = seg(0.42, 0.62);
-        setEl(body, c, `translateY(${(1 - c) * 22}px)`);
-      }
+    // 2. hero product parallax (differing rates create depth)
+    if (!reduce && pouch && y < vh * 1.2) {
+      pouch.style.transform = `translateY(${y * -0.07}px)`;
+      if (box) box.style.transform = `translateY(${y * -0.13}px)`;
     }
 
     // 4. dark join section arrival (one-shot, latched on a boolean)

@@ -23,8 +23,8 @@
   --on-red: #FCF6EA;
   --red-on-dark: #F0A2A6; /* emphasis inside the dark join section */
 
-  /* gold */
-  --gold: #9A6B12;        /* eyebrows, product-noun emphasis */
+  /* gold (WCAG AA on cream: 4.85:1 for small text) */
+  --gold: #8A5E0C;        /* eyebrows, product-noun emphasis */
   --gold-soft: #C6A24C;   /* eyebrows on dark */
 
   /* lines + shadows */

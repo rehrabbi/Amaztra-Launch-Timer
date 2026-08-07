@@ -26,29 +26,31 @@ export default function TopBar() {
     <>
       <a className="skip-link" href="#main">Skip to content</a>
 
-      {announce && (
-        <div className="announce">
-          <p>{ANNOUNCE}</p>
-          <button type="button" className="announce__x" onClick={closeAnnounce} aria-label="Dismiss announcement">
-            <Close size={15} />
-          </button>
-        </div>
-      )}
+      <header className="topbar">
+        {announce && (
+          <div className="announce">
+            <p>{ANNOUNCE}</p>
+            <button type="button" className="announce__x" onClick={closeAnnounce} aria-label="Dismiss announcement">
+              <Close size={15} />
+            </button>
+          </div>
+        )}
 
-      <div className="bar" data-bar>
-        <div className="bar__inner container">
-          <a
-            href="#top"
-            onClick={(e) => { e.preventDefault(); scrollToId('top'); }}
-            aria-label="AMAZTRA, back to top"
-          >
-            <Wordmark variant="bar" />
-          </a>
-          <button type="button" className="bar__cta" onClick={() => scrollToId('join')}>
-            {CTA_LABEL}
-          </button>
+        <div className="bar" data-bar>
+          <div className="bar__inner container">
+            <a
+              href="#top"
+              onClick={(e) => { e.preventDefault(); scrollToId('top'); }}
+              aria-label="AMAZTRA, back to top"
+            >
+              <Wordmark variant="bar" />
+            </a>
+            <button type="button" className="bar__cta" onClick={() => scrollToId('join')}>
+              {CTA_LABEL}
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
     </>
   );
 }

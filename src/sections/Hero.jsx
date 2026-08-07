@@ -57,12 +57,14 @@ export default function Hero() {
             <img
               className="hero__pouch" data-pouch
               src="assets/img/pouch/clean-front.webp" onError={onImgError}
+              width="900" height="1200"
               decoding="async" fetchpriority="high"
               alt="AMAZTRA instant coffee pouch"
             />
             <img
               className="hero__box" data-box
               src="assets/img/amaztra-box.webp" onError={onImgError}
+              width="960" height="1200"
               decoding="async" fetchpriority="high"
               alt="AMAZTRA capsule pack, a glutathione and collagen food supplement"
             />

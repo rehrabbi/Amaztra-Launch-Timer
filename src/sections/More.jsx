@@ -27,7 +27,7 @@ export default function More() {
               <span>{VISIT_LABEL}</span><Arrow size={18} />
             </a>
             <div className="more__maker">
-              <img src={TRUST.makerLogo} onError={onImgError} loading="lazy" decoding="async" height="28" alt={`${TRUST.maker} logo`} />
+              <img src={TRUST.makerLogo} onError={onImgError} loading="lazy" decoding="async" width="256" height="256" alt={`${TRUST.maker} logo`} />
               <span>Made by {TRUST.maker}</span>
             </div>
           </div>

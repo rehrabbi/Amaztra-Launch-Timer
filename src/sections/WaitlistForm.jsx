@@ -4,7 +4,8 @@ import { CTA_LABEL } from '../content.js';
 import { Check, Arrow } from './icons.jsx';
 
 const MESSAGES = {
-  invalidName: { tone: 'error', text: 'Please enter your name.' },
+  invalidFirst: { tone: 'error', text: 'Please enter your first name.' },
+  invalidLast: { tone: 'error', text: 'Please enter your last name.' },
   invalid: { tone: 'error', text: 'Please enter a valid email address.' },
   duplicate: { tone: 'ok', text: 'You are already on the list. Thank you.' },
   error: { tone: 'error', text: 'Something went wrong. Please try again in a moment.' },
@@ -12,19 +13,22 @@ const MESSAGES = {
 };
 
 // Accessible waitlist form with full states: idle, validating, loading,
-// success, duplicate, error, and not-configured. Collects a required full name
-// and email. Never fakes a success.
+// success, duplicate, error, and not-configured. Collects a required first and
+// last name plus email. Never fakes a success.
 export default function WaitlistForm({ id = 'default', dark = false }) {
-  const nameId = useId();
+  const firstId = useId();
+  const lastId = useId();
   const inputId = useId();
   const msgId = useId();
-  const [name, setName] = useState('');
+  const [first, setFirst] = useState('');
+  const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState('idle'); // idle | loading | ok | duplicate | invalidName | invalid | error | unconfigured
+  const [status, setStatus] = useState('idle'); // idle | loading | ok | duplicate | invalidFirst | invalidLast | invalid | error | unconfigured
   const [hp, setHp] = useState(''); // honeypot
 
   const done = status === 'ok' || status === 'duplicate';
-  const nameInvalid = status === 'invalidName';
+  const firstInvalid = status === 'invalidFirst';
+  const lastInvalid = status === 'invalidLast';
   const emailInvalid = status === 'invalid' || status === 'error';
   const msg = MESSAGES[status];
 
@@ -36,8 +40,12 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
     e.preventDefault();
     if (status === 'loading' || done) return;
     if (hp) return; // bot filled the honeypot; ignore silently
-    if (!name.trim()) {
-      setStatus('invalidName');
+    if (!first.trim()) {
+      setStatus('invalidFirst');
+      return;
+    }
+    if (!last.trim()) {
+      setStatus('invalidLast');
       return;
     }
     if (!EMAIL_RE.test(email.trim())) {
@@ -45,7 +53,14 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
       return;
     }
     setStatus('loading');
-    const result = await submitWaitlist(email, { form: id, name: name.trim() });
+    const firstName = first.trim();
+    const lastName = last.trim();
+    const result = await submitWaitlist(email, {
+      form: id,
+      firstName,
+      lastName,
+      name: `${firstName} ${lastName}`,
+    });
     setStatus(result);
   }
 
@@ -65,21 +80,39 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
 
   return (
     <form className={`wl${dark ? ' wl--dark' : ''}`} onSubmit={onSubmit} noValidate>
-      <div className="field">
-        <label htmlFor={nameId}>Full name</label>
-        <input
-          id={nameId}
-          type="text"
-          name="name"
-          autoComplete="name"
-          placeholder="Your full name"
-          value={name}
-          onChange={(e) => { setName(e.target.value); resetIfIdle(); }}
-          aria-invalid={nameInvalid}
-          aria-describedby={nameInvalid ? msgId : undefined}
-          disabled={status === 'loading'}
-          required
-        />
+      <div className="wl__names">
+        <div className="field">
+          <label htmlFor={firstId}>First name</label>
+          <input
+            id={firstId}
+            type="text"
+            name="firstName"
+            autoComplete="given-name"
+            placeholder="First name"
+            value={first}
+            onChange={(e) => { setFirst(e.target.value); resetIfIdle(); }}
+            aria-invalid={firstInvalid}
+            aria-describedby={firstInvalid ? msgId : undefined}
+            disabled={status === 'loading'}
+            required
+          />
+        </div>
+        <div className="field">
+          <label htmlFor={lastId}>Last name</label>
+          <input
+            id={lastId}
+            type="text"
+            name="lastName"
+            autoComplete="family-name"
+            placeholder="Last name"
+            value={last}
+            onChange={(e) => { setLast(e.target.value); resetIfIdle(); }}
+            aria-invalid={lastInvalid}
+            aria-describedby={lastInvalid ? msgId : undefined}
+            disabled={status === 'loading'}
+            required
+          />
+        </div>
       </div>
       <div className="field">
         <label htmlFor={inputId}>Email address</label>
@@ -94,7 +127,7 @@ export default function WaitlistForm({ id = 'default', dark = false }) {
             value={email}
             onChange={(e) => { setEmail(e.target.value); resetIfIdle(); }}
             aria-invalid={emailInvalid}
-            aria-describedby={msg && !nameInvalid ? msgId : undefined}
+            aria-describedby={msg && !firstInvalid && !lastInvalid ? msgId : undefined}
             disabled={status === 'loading'}
             required
           />

@@ -272,7 +272,7 @@ h1, h2, h3 {
 
 /* ---- waitlist form ---- */
 .wl { width: 100%; max-width: 520px; }
-.wl .field + .field { margin-top: 0.85rem; }
+.wl__names { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.85rem; }
 .wl__row { display: flex; gap: 0.6rem; align-items: stretch; }
 .wl__row input[type="email"] { flex: 1 1 auto; min-width: 0; }
 .wl__row .btn { flex: 0 0 auto; }
@@ -305,6 +305,7 @@ h1, h2, h3 {
 .wl--dark .field__msg[data-tone="ok"] { color: #a7e0a9; }
 
 @media (max-width: 560px) {
+  .wl__names { grid-template-columns: 1fr; }
   .wl__row { flex-direction: column; }
   .wl__row .btn { width: 100%; }
 }

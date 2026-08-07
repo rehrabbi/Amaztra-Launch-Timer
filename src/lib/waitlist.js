@@ -5,6 +5,8 @@
 // Set it in a local .env file (see .env.example):
 //   VITE_WAITLIST_ENDPOINT=https://formspree.io/f/xxxxxxx
 
+import { track } from './analytics.js';
+
 const ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT || '';
 const STORE_KEY = 'amaztra_waitlist_email';
 
@@ -43,6 +45,8 @@ export async function submitWaitlist(email, meta = {}) {
     });
     if (res.ok) {
       remember(clean);
+      // Privacy-friendly: record that a signup happened, with no email or PII.
+      track('waitlist_signup', { form: meta.form || 'default' });
       return 'ok';
     }
     // Formspree returns 422 with an errors array for rejected submissions.

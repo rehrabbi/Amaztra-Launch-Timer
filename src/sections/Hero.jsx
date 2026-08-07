@@ -4,6 +4,7 @@ import { useCountdown } from '../lib/useCountdown.js';
 import { HERO, LAUNCH_ISO, LAUNCH_DATE_LABEL, LANDING_URL, CTA_LABEL } from '../content.js';
 import { onImgError } from '../imgFallback.js';
 import { Arrow } from './icons.jsx';
+import AddToCalendar from './AddToCalendar.jsx';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -62,6 +63,7 @@ export default function Hero() {
         <div className="hero__cd" data-hero-in>
           <p className="hero__cd-label">{HERO.openLabel}</p>
           <Countdown />
+          <AddToCalendar />
         </div>
 
         <p className="hero__sub" data-hero-in>{HERO.sub}</p>
